@@ -35,7 +35,7 @@ def lipa_na_mpesa_online(request):
         "Amount": 1,  # Test amount
         "PartyA": "254791474737",  # User's phone number
         "PartyB": settings.MPESA_SHORTCODE,
-        "PhoneNumber": "2547XXXXXXXX",  # User's phone number
+        "PhoneNumber": "254791474737",  # User's phone number
         "CallBackURL": "https://hospital-management-system-30uy.onrender.com/",
         "AccountReference": "Test123",
         "TransactionDesc": "Payment for Test"

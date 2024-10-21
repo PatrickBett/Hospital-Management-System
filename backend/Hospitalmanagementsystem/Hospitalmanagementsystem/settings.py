@@ -153,9 +153,9 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
-CONSUMER_KEY = 'zfzBeVLqELuE0kIT8eua2NyT1bzVY39334a6T0deYvggGcxw'
-CONSUMER_SECRET = 'lm2raDWWyBKceoZHVEba1BVix0SDtAt8juG0AkFesG5yc2VKErqOtEkQnwetfmy9'
-BUSINESS_SHORT_CODE = 174379
+MPESA_CONSUMER_KEY = 'zfzBeVLqELuE0kIT8eua2NyT1bzVY39334a6T0deYvggGcxw'
+MPESA_CONSUMER_SECRET = 'lm2raDWWyBKceoZHVEba1BVix0SDtAt8juG0AkFesG5yc2VKErqOtEkQnwetfmy9'
+MPESA_SHORTCODE = 174379
 MPESA_PASSKEY = 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919'
 API_URL = 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest'
 MPESA_ENVIRONMENT = 'sandbox'

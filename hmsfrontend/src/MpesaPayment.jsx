@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-
+import api from './api';
 const MpesaPayment = () => {
   const [paymentStatus, setPaymentStatus] = useState('');
 
   const handleMpesaPayment = async () => {
     try {
-      const response = await fetch('/hms/mpesa-payment/', {
+      const response = await api.fetch('/hms/mpesa-payment/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
