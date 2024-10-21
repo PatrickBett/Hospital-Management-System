@@ -1,0 +1,18 @@
+#landing-page{
+  min-height: 100vh;
+  
+}
+#landing-page{
+  background: url('https://cdn.apollohospitals.com/dev-apollohospitals/2022/05/apollo-proton_v-2.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+#footer{
+  bottom: 0;
+ 
+}
+#form{
+  max-width: 380px;
+  
+}
