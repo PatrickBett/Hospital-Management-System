@@ -6,20 +6,21 @@ from django.http import JsonResponse
 import base64
 from django.utils import timezone
 
-def get_mpesa_access_token(request):
+def get_mpesa_access_token():
     consumer_key = settings.MPESA_CONSUMER_KEY
     consumer_secret = settings.MPESA_CONSUMER_SECRET
     api_url = 'https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials'
 
     response = requests.get(api_url, auth=(consumer_key, consumer_secret))
     if response.status_code == 200:
-        access_token = response.json().get('access_token')
-        return JsonResponse({'access_token': access_token})
-    return JsonResponse({'error': 'Failed to get access token'}, status=400)
-
+        return response.json().get('access_token')  # Get access token from JSON response
+    return None
 
 def lipa_na_mpesa_online(request):
-    access_token = get_mpesa_access_token(request).json().get('access_token')
+    access_token = get_mpesa_access_token()  # Call the function to get the token
+
+    if access_token is None:
+        return JsonResponse({'error': 'Failed to get access token'}, status=400)
 
     api_url = 'https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest'
     headers = {"Authorization": f"Bearer {access_token}"}
@@ -36,13 +37,18 @@ def lipa_na_mpesa_online(request):
         "PartyA": "254791474737",  # User's phone number
         "PartyB": settings.MPESA_SHORTCODE,
         "PhoneNumber": "254791474737",  # User's phone number
-        "CallBackURL": "https://hospital-management-system-30uy.onrender.com/",
+        "CallBackURL": "https://your-callback-url.com/",
         "AccountReference": "Test123",
         "TransactionDesc": "Payment for Test"
     }
 
     response = requests.post(api_url, json=payload, headers=headers)
-    return JsonResponse(response.json())
+    
+    if response.status_code == 200:
+        return JsonResponse(response.json())  # Return the response from the M-Pesa API
+    else:
+        return JsonResponse({'error': 'Payment initiation failed'}, status=response.status_code)
+
 
 
 @csrf_exempt
