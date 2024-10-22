@@ -11,7 +11,8 @@ const MpesaPayment = () => {
           'Content-Type': 'application/json',
         },
       });
-      const data = await response.json();
+
+      const data = await response.data;
       console.log(data)
       console.log("success")
       if (data.error) {
@@ -19,7 +20,10 @@ const MpesaPayment = () => {
       } else {
         setPaymentStatus('Payment initiated, check your phone for the MPesa prompt.');
       }
-    } catch (error) {
+    } 
+    
+    catch (error)
+     {
       setPaymentStatus('An error occurred.');
     }
   };
