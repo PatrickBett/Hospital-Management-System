@@ -26,7 +26,7 @@ const MpesaPayment = () => {
 
   return (
     <div>
-      <h2>Pay with MPesa</h2>
+      <h2>Pay with M-Pesa</h2>
       <button onClick={handleMpesaPayment}>Pay Now</button>
       {paymentStatus && <p>{paymentStatus}</p>}
     </div>
