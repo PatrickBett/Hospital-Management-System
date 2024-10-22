@@ -12,6 +12,7 @@ const MpesaPayment = () => {
         },
       });
       const data = await response.json();
+      console.log(data)
       if (data.error) {
         setPaymentStatus('Payment failed');
       } else {
