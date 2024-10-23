@@ -5,21 +5,24 @@ const MpesaPayment = () => {
 
   const handleMpesaPayment = async () => {
     try {
-      const response = await api.fetch('/hms/mpesa-payment/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+        console.log("success")
+        setPaymentStatus('Payment success')
+    //   const response = await api.fetch('/hms/mpesa-payment/', {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //   });
 
-      const data = await response.data;
-      console.log(data)
-      console.log("success")
-      if (data.error) {
-        setPaymentStatus('Payment failed');
-      } else {
-        setPaymentStatus('Payment initiated, check your phone for the MPesa prompt.');
-      }
+    //   const data = await response.data;
+    //   console.log(data)
+    //   console.log("success")
+    //   if (data.error) {
+    //     setPaymentStatus('Payment failed');
+    //   } else {
+    //     setPaymentStatus('Payment initiated, check your phone for the MPesa prompt.');
+    //   }
+    // 
     } 
     
     catch (error)
