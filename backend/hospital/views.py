@@ -16,7 +16,7 @@ class RoomTypeView(APIView):
         return Response(serializer.data)
     
 # View to list all Rooms
-class RoomTypeView(APIView):
+class RoomView(APIView):
     permission_classes = [IsAuthenticated] #Only authenticated users
 
     def get(self,request):

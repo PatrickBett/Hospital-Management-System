@@ -1,12 +1,13 @@
 from rest_framework import serializers
 from .models import Specialization,Doctordetail
-
+from members.serializers import CustomUserSerializer
 class SpecializationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Specialization
         fields = '__all__'
 
 class DoctordetailSerializer(serializers.ModelSerializer):
+    name = CustomUserSerializer()
     class Meta:
         model = Doctordetail
         fields = '__all__'
