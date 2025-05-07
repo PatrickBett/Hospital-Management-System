@@ -18,4 +18,4 @@ class Doctordetail(models.Model):
     availability = models.BooleanField(default=True)
 
     def __str__(self):
-        return f'Dr. {self.name.username} Details' 
+        return f'Dr. {self.doctor.username} Details' 

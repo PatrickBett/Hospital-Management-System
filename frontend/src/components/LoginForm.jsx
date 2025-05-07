@@ -1,0 +1,241 @@
+import React, { useState } from "react";
+import { LogIn, User, Lock, Users, Shield } from "react-feather";
+import "bootstrap/dist/css/bootstrap.min.css";
+
+const LoginForm = () => {
+  const [userType, setUserType] = useState("patient");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setError("");
+    setIsLoading(true);
+
+    // Simulating authentication process
+    setTimeout(() => {
+      // In a real application, you would handle authentication here
+      // and redirect based on user type and auth status
+      console.log("Login attempt:", { userType, email, password, rememberMe });
+      setIsLoading(false);
+
+      // For demo purposes, showing error for empty fields
+      if (!email || !password) {
+        setError("Please enter both email and password");
+      }
+    }, 1000);
+  };
+
+  return (
+    <div className="login-page bg-light min-vh-100 d-flex align-items-center">
+      <div className="container">
+        <div className="row justify-content-center">
+          <div className="col-md-8 col-lg-6 col-xl-5">
+            <div className="card border-0 shadow-sm">
+              <div className="card-body p-4 p-sm-5">
+                <div className="text-center mb-4">
+                  <h3 className="fw-bold text-primary mb-1">MediCare Pro</h3>
+                  <p className="text-muted">Sign in to access your account</p>
+                </div>
+
+                {/* User Type Selector */}
+                <div className="user-type-selector mb-4">
+                  <div className="d-flex justify-content-between border rounded p-1 bg-light">
+                    <button
+                      type="button"
+                      className={`btn flex-grow-1 py-2 ${
+                        userType === "patient"
+                          ? "btn-primary"
+                          : "btn-light text-muted"
+                      }`}
+                      onClick={() => setUserType("patient")}
+                    >
+                      <User size={18} className="me-2" />
+                      Patient
+                    </button>
+                    <button
+                      type="button"
+                      className={`btn flex-grow-1 py-2 ${
+                        userType === "doctor"
+                          ? "btn-primary"
+                          : "btn-light text-muted"
+                      }`}
+                      onClick={() => setUserType("doctor")}
+                    >
+                      <Users size={18} className="me-2" />
+                      Doctor
+                    </button>
+                    <button
+                      type="button"
+                      className={`btn flex-grow-1 py-2 ${
+                        userType === "admin"
+                          ? "btn-primary"
+                          : "btn-light text-muted"
+                      }`}
+                      onClick={() => setUserType("admin")}
+                    >
+                      <Shield size={18} className="me-2" />
+                      Admin
+                    </button>
+                  </div>
+                </div>
+
+                {/* Error Message */}
+                {error && (
+                  <div className="alert alert-danger py-2" role="alert">
+                    {error}
+                  </div>
+                )}
+
+                {/* Login Form */}
+                <form onSubmit={handleSubmit}>
+                  <div className="mb-3">
+                    <label htmlFor="email" className="form-label">
+                      Email Address
+                    </label>
+                    <div className="input-group">
+                      <span className="input-group-text bg-light">
+                        <User size={18} className="text-muted" />
+                      </span>
+                      <input
+                        type="email"
+                        className="form-control"
+                        id="email"
+                        placeholder={`Enter your email${
+                          userType === "admin" ? " (admin@medicpro.com)" : ""
+                        }`}
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mb-4">
+                    <div className="d-flex justify-content-between align-items-center mb-1">
+                      <label htmlFor="password" className="form-label mb-0">
+                        Password
+                      </label>
+                      <a
+                        href="#forgot-password"
+                        className="text-primary small text-decoration-none"
+                      >
+                        Forgot password?
+                      </a>
+                    </div>
+                    <div className="input-group">
+                      <span className="input-group-text bg-light">
+                        <Lock size={18} className="text-muted" />
+                      </span>
+                      <input
+                        type="password"
+                        className="form-control"
+                        id="password"
+                        placeholder="Enter your password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="mb-4 d-flex justify-content-between">
+                    <div className="form-check">
+                      <input
+                        type="checkbox"
+                        className="form-check-input"
+                        id="rememberMe"
+                        checked={rememberMe}
+                        onChange={(e) => setRememberMe(e.target.checked)}
+                      />
+                      <label
+                        className="form-check-label user-select-none"
+                        htmlFor="rememberMe"
+                      >
+                        Remember me
+                      </label>
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="btn btn-primary w-100 py-2 mb-3"
+                    disabled={isLoading}
+                  >
+                    {isLoading ? (
+                      <span>
+                        <span
+                          className="spinner-border spinner-border-sm me-2"
+                          role="status"
+                          aria-hidden="true"
+                        ></span>
+                        Signing in...
+                      </span>
+                    ) : (
+                      <span className="d-flex align-items-center justify-content-center">
+                        <LogIn size={18} className="me-2" />
+                        Sign In as{" "}
+                        {userType.charAt(0).toUpperCase() + userType.slice(1)}
+                      </span>
+                    )}
+                  </button>
+
+                  {userType === "patient" && (
+                    <div className="text-center">
+                      <p className="text-muted mb-0">
+                        Don't have an account?{" "}
+                        <a href="#register" className="text-primary">
+                          Register Now
+                        </a>
+                      </p>
+                    </div>
+                  )}
+                </form>
+
+                {/* Additional Information */}
+                {userType === "doctor" && (
+                  <div className="mt-4 pt-3 border-top">
+                    <div className="alert alert-info py-2" role="alert">
+                      <small>
+                        <strong>Note for Doctors:</strong> If you're having
+                        trouble accessing your account, please contact your
+                        hospital administrator.
+                      </small>
+                    </div>
+                  </div>
+                )}
+
+                {userType === "admin" && (
+                  <div className="mt-4 pt-3 border-top">
+                    <div className="alert alert-info py-2" role="alert">
+                      <small>
+                        <strong>Admin Access:</strong> This portal is restricted
+                        to authorized hospital administrators only. For security
+                        reasons, failed login attempts are logged.
+                      </small>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Help & Support */}
+            <div className="text-center mt-4">
+              <p className="text-muted small mb-0">
+                Need help?{" "}
+                <a href="#help" className="text-primary">
+                  Contact Support
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default LoginForm;

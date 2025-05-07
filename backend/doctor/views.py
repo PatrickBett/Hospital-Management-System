@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from .models import Specialization, Doctordetail
 from members.models import CustomUser
-from members.serializers import CustomUserSerializer
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
