@@ -10,7 +10,13 @@ class CustomUser(AbstractUser):
     )
 
     role = models.CharField(max_length=20, choices=ROLE_CHOICES)
+    doctor_number = models.CharField(max_length=20, blank=True, null=True)
 
+    def save(self, *args, **kwargs):
+        # Optional: Clear doctor_number if not a doctor
+        if self.role != 'doctor':
+            self.doctor_number = None
+        super().save(*args, **kwargs)
 
 class Profile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)

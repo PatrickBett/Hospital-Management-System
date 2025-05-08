@@ -1,13 +1,16 @@
 import { useState } from "react";
+import axios from "axios";
 
 export default function SignupForm() {
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
+    first_name: "",
+    last_name: "",
+    username: "",
     email: "",
     password: "",
     confirmPassword: "",
-    role: "",
+    role: "patient", // Default role set to patient
+    doctor_number: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -18,13 +21,13 @@ export default function SignupForm() {
     const newErrors = {};
 
     // First name validation
-    if (!formData.firstName.trim()) {
-      newErrors.firstName = "First name is required";
+    if (!formData.first_name.trim()) {
+      newErrors.first_name = "First name is required";
     }
 
     // Last name validation
-    if (!formData.lastName.trim()) {
-      newErrors.lastName = "Last name is required";
+    if (!formData.last_name.trim()) {
+      newErrors.last_name = "Last name is required";
     }
 
     // Email validation
@@ -46,9 +49,9 @@ export default function SignupForm() {
       newErrors.confirmPassword = "Passwords do not match";
     }
 
-    // Role validation
-    if (!formData.role) {
-      newErrors.role = "Please select a role";
+    // Doctor number validation (only if role is doctor)
+    if (formData.role === "doctor" && !formData.doctor_number.trim()) {
+      newErrors.doctor_number = "Doctor number is required";
     }
 
     return newErrors;
@@ -64,11 +67,20 @@ export default function SignupForm() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     const formErrors = validateForm();
 
     if (Object.keys(formErrors).length === 0) {
       // Form is valid, submit data
       console.log("Form submitted successfully:", formData);
+      //function to submit formdata to bbackend
+
+      axios
+        .post("http://127.0.0.1:8000/api/users/", formData)
+        .then((response) => {
+          console.log(response.data);
+        });
+
       setSubmitStatus("success");
       setErrors({});
 
@@ -78,12 +90,14 @@ export default function SignupForm() {
       // Reset form after successful submission
       setTimeout(() => {
         setFormData({
-          firstName: "",
-          lastName: "",
+          first_name: "",
+          last_name: "",
+          username: "",
           email: "",
           password: "",
           confirmPassword: "",
-          role: "",
+          role: "patient",
+          doctor_number: "",
         });
         setSubmitStatus("");
       }, 3000);
@@ -98,221 +112,291 @@ export default function SignupForm() {
   };
 
   return (
-    <div className="container mt-5">
-      <div className="row justify-content-center">
-        <div className="col-md-6">
-          <div className="card shadow">
-            <div className="card-header bg-primary text-white">
-              <h3 className="mb-0 text-center">Create an Account</h3>
+    <div
+      className="container d-flex justify-content-center align-items-center"
+      style={{ minHeight: "100vh" }}
+    >
+      <div
+        className="card shadow-sm border-0"
+        style={{ maxWidth: "500px", width: "100%" }}
+      >
+        <div className="card-body p-4 p-md-5">
+          <h1 className="text-center mb-0 fw-bold text-primary">
+            MediCare Pro
+          </h1>
+          <p
+            className="text-center text-muted mb-4 mt-2"
+            style={{ fontSize: "1.2rem" }}
+          >
+            Sign up to create your account
+          </p>
+
+          {submitStatus === "success" && (
+            <div className="alert alert-success" role="alert">
+              Registration successful! Please check your email to verify your
+              account.
             </div>
-            <div className="card-body">
-              {submitStatus === "success" && (
-                <div className="alert alert-success" role="alert">
-                  <i className="bi bi-check-circle-fill me-2"></i>
-                  Registration successful! Welcome aboard.
-                </div>
-              )}
+          )}
 
-              <form onSubmit={handleSubmit}>
-                <div className="row mb-3">
-                  <div className="col-md-6">
-                    <label htmlFor="firstName" className="form-label">
-                      First Name
-                    </label>
-                    <input
-                      type="text"
-                      className={`form-control ${
-                        errors.firstName ? "is-invalid" : ""
-                      }`}
-                      id="firstName"
-                      name="firstName"
-                      value={formData.firstName}
-                      onChange={handleChange}
-                      placeholder="Enter first name"
-                    />
-                    {errors.firstName && (
-                      <div className="invalid-feedback">{errors.firstName}</div>
-                    )}
-                  </div>
-
-                  <div className="col-md-6">
-                    <label htmlFor="lastName" className="form-label">
-                      Last Name
-                    </label>
-                    <input
-                      type="text"
-                      className={`form-control ${
-                        errors.lastName ? "is-invalid" : ""
-                      }`}
-                      id="lastName"
-                      name="lastName"
-                      value={formData.lastName}
-                      onChange={handleChange}
-                      placeholder="Enter last name"
-                    />
-                    {errors.lastName && (
-                      <div className="invalid-feedback">{errors.lastName}</div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="mb-3">
-                  <label htmlFor="email" className="form-label">
-                    Email address
-                  </label>
-                  <input
-                    type="email"
-                    className={`form-control ${
-                      errors.email ? "is-invalid" : ""
-                    }`}
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder="name@example.com"
-                  />
-                  {errors.email && (
-                    <div className="invalid-feedback">{errors.email}</div>
-                  )}
-                </div>
-
-                <div className="mb-3">
-                  <label htmlFor="password" className="form-label">
-                    Password
-                  </label>
-                  <div className="input-group">
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      className={`form-control ${
-                        errors.password ? "is-invalid" : ""
-                      }`}
-                      id="password"
-                      name="password"
-                      value={formData.password}
-                      onChange={handleChange}
-                      placeholder="Enter password"
-                    />
-                    <button
-                      className="btn btn-outline-secondary"
-                      type="button"
-                      onClick={togglePasswordVisibility}
-                    >
-                      {showPassword ? (
-                        <i className="bi bi-eye-slash"></i>
-                      ) : (
-                        <i className="bi bi-eye"></i>
-                      )}
-                    </button>
-                    {errors.password && (
-                      <div className="invalid-feedback">{errors.password}</div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="mb-3">
-                  <label htmlFor="confirmPassword" className="form-label">
-                    Confirm Password
-                  </label>
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    className={`form-control ${
-                      errors.confirmPassword ? "is-invalid" : ""
-                    }`}
-                    id="confirmPassword"
-                    name="confirmPassword"
-                    value={formData.confirmPassword}
-                    onChange={handleChange}
-                    placeholder="Confirm your password"
-                  />
-                  {errors.confirmPassword && (
-                    <div className="invalid-feedback">
-                      {errors.confirmPassword}
-                    </div>
-                  )}
-                </div>
-
-                <div className="mb-4">
-                  <label className="form-label">Select Your Role</label>
-                  <div className="row">
-                    <div className="col-md-4">
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          name="role"
-                          id="rolePatient"
-                          value="patient"
-                          checked={formData.role === "patient"}
-                          onChange={handleChange}
-                        />
-                        <label
-                          className="form-check-label"
-                          htmlFor="rolePatient"
-                        >
-                          Patient
-                        </label>
-                      </div>
-                    </div>
-
-                    <div className="col-md-4">
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          name="role"
-                          id="roleDoctor"
-                          value="doctor"
-                          checked={formData.role === "doctor"}
-                          onChange={handleChange}
-                        />
-                        <label
-                          className="form-check-label"
-                          htmlFor="roleDoctor"
-                        >
-                          Doctor
-                        </label>
-                      </div>
-                    </div>
-
-                    <div className="col-md-4">
-                      <div className="form-check">
-                        <input
-                          className="form-check-input"
-                          type="radio"
-                          name="role"
-                          id="roleAdmin"
-                          value="admin"
-                          checked={formData.role === "admin"}
-                          onChange={handleChange}
-                        />
-                        <label className="form-check-label" htmlFor="roleAdmin">
-                          Admin
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                  {errors.role && (
-                    <div className="text-danger small">{errors.role}</div>
-                  )}
-                </div>
-
-                <div className="d-grid gap-2">
-                  <button type="submit" className="btn btn-primary btn-lg">
-                    Sign Up
-                  </button>
-                </div>
-
-                <div className="mt-3 text-center">
-                  <p className="mb-0">
-                    Already have an account?{" "}
-                    <a href="/login" className="text-primary">
-                      Login
-                    </a>
-                  </p>
-                </div>
-              </form>
+          {/* Role Selection */}
+          <div className="card mb-4">
+            <div className="card-body p-0">
+              <div className="d-flex">
+                <button
+                  type="button"
+                  className={`btn flex-grow-1 py-3 rounded-0 ${
+                    formData.role === "patient"
+                      ? "btn-primary text-white"
+                      : "btn-light"
+                  }`}
+                  onClick={() => setFormData({ ...formData, role: "patient" })}
+                >
+                  <i className="bi bi-person me-2"></i> Patient
+                </button>
+                <button
+                  type="button"
+                  className={`btn flex-grow-1 py-3 rounded-0 ${
+                    formData.role === "doctor"
+                      ? "btn-primary text-white"
+                      : "btn-light"
+                  }`}
+                  onClick={() => setFormData({ ...formData, role: "doctor" })}
+                >
+                  <i className="bi bi-clipboard2-pulse me-2"></i> Doctor
+                </button>
+                <button
+                  type="button"
+                  className={`btn flex-grow-1 py-3 rounded-0 ${
+                    formData.role === "admin"
+                      ? "btn-primary text-white"
+                      : "btn-light"
+                  }`}
+                  onClick={() => setFormData({ ...formData, role: "admin" })}
+                >
+                  <i className="bi bi-shield-lock me-2"></i> Admin
+                </button>
+              </div>
             </div>
           </div>
+
+          <form onSubmit={handleSubmit}>
+            <div className="row mb-3">
+              <div className="col-md-6">
+                <label htmlFor="first_name" className="form-label">
+                  First Name
+                </label>
+                <div className="input-group">
+                  <span className="input-group-text bg-light">
+                    <i className="bi bi-person"></i>
+                  </span>
+                  <input
+                    type="text"
+                    className={`form-control ${
+                      errors.first_name ? "is-invalid" : ""
+                    }`}
+                    id="first_name"
+                    name="first_name"
+                    value={formData.first_name}
+                    onChange={handleChange}
+                    placeholder="First name"
+                  />
+                  {errors.first_name && (
+                    <div className="invalid-feedback">{errors.first_name}</div>
+                  )}
+                </div>
+              </div>
+
+              <div className="col-md-6">
+                <label htmlFor="last_name" className="form-label">
+                  Last Name
+                </label>
+                <div className="input-group">
+                  <span className="input-group-text bg-light">
+                    <i className="bi bi-person"></i>
+                  </span>
+                  <input
+                    type="text"
+                    className={`form-control ${
+                      errors.last_name ? "is-invalid" : ""
+                    }`}
+                    id="last_name"
+                    name="last_name"
+                    value={formData.last_name}
+                    onChange={handleChange}
+                    placeholder="Last name"
+                  />
+                  {errors.last_name && (
+                    <div className="invalid-feedback">{errors.last_name}</div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="col-md-6">
+              <label htmlFor="username" className="form-label">
+                Username
+              </label>
+              <div className="input-group">
+                <span className="input-group-text bg-light">
+                  <i className="bi bi-person"></i>
+                </span>
+                <input
+                  type="text"
+                  className={`form-control ${
+                    errors.last_name ? "is-invalid" : ""
+                  }`}
+                  id="username"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleChange}
+                  placeholder="username"
+                />
+                {errors.username && (
+                  <div className="invalid-feedback">{errors.username}</div>
+                )}
+              </div>
+            </div>
+
+            <div className="mb-3">
+              <label htmlFor="email" className="form-label">
+                Email Address
+              </label>
+              <div className="input-group">
+                <span className="input-group-text bg-light">
+                  <i className="bi bi-envelope"></i>
+                </span>
+                <input
+                  type="email"
+                  className={`form-control ${errors.email ? "is-invalid" : ""}`}
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="Email address"
+                />
+                {errors.email && (
+                  <div className="invalid-feedback">{errors.email}</div>
+                )}
+              </div>
+            </div>
+
+            {/* Conditional Doctor Number Field */}
+            {formData.role === "doctor" && (
+              <div className="mb-3">
+                <label htmlFor="doctor_number" className="form-label">
+                  Doctor Number
+                </label>
+                <div className="input-group">
+                  <span className="input-group-text bg-light">
+                    <i className="bi bi-card-heading"></i>
+                  </span>
+                  <input
+                    type="text"
+                    className={`form-control ${
+                      errors.doctor_number ? "is-invalid" : ""
+                    }`}
+                    id="doctor_number"
+                    name="doctor_number"
+                    value={formData.doctor_number}
+                    onChange={handleChange}
+                    placeholder="Enter your doctor license number"
+                  />
+                  {errors.doctor_number && (
+                    <div className="invalid-feedback">
+                      {errors.doctor_number}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            <div className="mb-3">
+              <label htmlFor="password" className="form-label">
+                Password
+              </label>
+              <div className="input-group">
+                <span className="input-group-text bg-light">
+                  <i className="bi bi-lock"></i>
+                </span>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  className={`form-control ${
+                    errors.password ? "is-invalid" : ""
+                  }`}
+                  id="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  placeholder="Create a password"
+                />
+                <button
+                  className="btn btn-outline-secondary"
+                  type="button"
+                  onClick={togglePasswordVisibility}
+                >
+                  <i
+                    className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"}`}
+                  ></i>
+                </button>
+                {errors.password && (
+                  <div className="invalid-feedback">{errors.password}</div>
+                )}
+              </div>
+            </div>
+
+            <div className="mb-4">
+              <label htmlFor="confirmPassword" className="form-label">
+                Confirm Password
+              </label>
+              <div className="input-group">
+                <span className="input-group-text bg-light">
+                  <i className="bi bi-lock"></i>
+                </span>
+                <input
+                  type={showPassword ? "text" : "password"}
+                  className={`form-control ${
+                    errors.confirmPassword ? "is-invalid" : ""
+                  }`}
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  placeholder="Confirm your password"
+                />
+                {errors.confirmPassword && (
+                  <div className="invalid-feedback">
+                    {errors.confirmPassword}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="mb-3 form-check">
+              <input
+                type="checkbox"
+                className="form-check-input"
+                id="rememberMe"
+              />
+              <label className="form-check-label" htmlFor="rememberMe">
+                Remember me
+              </label>
+            </div>
+
+            <div className="d-grid">
+              <button type="submit" className="btn btn-primary btn-lg">
+                <i className="bi bi-box-arrow-in-right me-2"></i>
+                Sign Up as{" "}
+                {formData.role.charAt(0).toUpperCase() + formData.role.slice(1)}
+              </button>
+            </div>
+          </form>
+
+          <p className="text-center mt-4">
+            Already have an account?{" "}
+            <a href="login" className="text-primary text-decoration-none">
+              Sign In
+            </a>
+          </p>
         </div>
       </div>
     </div>

@@ -45,11 +45,7 @@ const HospitalLandingPage = () => {
                   Testimonials
                 </a>
               </li>
-              <li className="nav-item">
-                <a className="nav-link" href="#pricing">
-                  Pricing
-                </a>
-              </li>
+
               <li className="nav-item">
                 <a className="nav-link" href="#contact">
                   Contact
@@ -70,10 +66,20 @@ const HospitalLandingPage = () => {
       </nav>
 
       {/* Hero Section */}
-      <header className="bg-primary text-white py-5">
-        <div className="container">
-          <div className="row align-items-center">
-            <div className="col-lg-6 mb-4 mb-lg-0">
+      <header
+        className="py-5"
+        style={{
+          backgroundImage:
+            "url('https://www.appletechsoft.com/wp-content/uploads/2020/06/Hospital-Management-System.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          position: "relative",
+        }}
+      >
+        <div className="container position-relative py-5" style={{ zIndex: 2 }}>
+          <div className="row py-5">
+            <div className="col-lg-6 mb-4 mb-lg-0 text-white py-4">
               <h1 className="display-4 fw-bold">
                 Streamline Your Hospital Operations
               </h1>
@@ -89,15 +95,19 @@ const HospitalLandingPage = () => {
                 </button>
               </div>
             </div>
-            <div className="col-lg-6">
-              <img
-                src="/api/placeholder/600/400"
-                alt="Hospital Management Dashboard Preview"
-                className="img-fluid rounded shadow"
-              />
-            </div>
           </div>
         </div>
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0, 123, 255, 0.7)", // blue overlay to maintain the blue theme
+            zIndex: 1,
+          }}
+        ></div>
       </header>
 
       {/* Features Section */}
@@ -469,11 +479,7 @@ const HospitalLandingPage = () => {
                     Features
                   </a>
                 </li>
-                <li className="mb-2">
-                  <a href="#" className="text-muted text-decoration-none">
-                    Pricing
-                  </a>
-                </li>
+
                 <li className="mb-2">
                   <a href="#" className="text-muted text-decoration-none">
                     Case Studies

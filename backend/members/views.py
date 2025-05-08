@@ -3,6 +3,8 @@ from .models import CustomUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.http import HttpResponse
+from .serializers import MyTokenObtainPairSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import CustomUserSerializer,ProfileSerializer
 # Create your views here.
 
@@ -21,3 +23,7 @@ class CustomUserListView(APIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors)
+    
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer

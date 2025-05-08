@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import { LogIn, User, Lock, Users, Shield } from "react-feather";
 import "bootstrap/dist/css/bootstrap.min.css";
-
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 const LoginForm = () => {
   const [userType, setUserType] = useState("patient");
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -16,15 +18,36 @@ const LoginForm = () => {
     setIsLoading(true);
 
     // Simulating authentication process
-    setTimeout(() => {
+    setTimeout(async () => {
       // In a real application, you would handle authentication here
       // and redirect based on user type and auth status
-      console.log("Login attempt:", { userType, email, password, rememberMe });
+      try {
+        const response = await axios.post("http://127.0.0.1:8000/api/token/", {
+          username,
+          password,
+        });
+        const { access, refresh, role } = response.data;
+        console.log(response.data);
+        localStorage.setItem("access_token", access);
+        localStorage.setItem("refresh_token", refresh);
+        localStorage.setItem("role", role);
+
+        navigate("/dashboard");
+      } catch (error) {
+        console.log(error);
+      }
+
+      console.log("Login attempt:", {
+        userType,
+        username,
+        password,
+        rememberMe,
+      });
       setIsLoading(false);
 
       // For demo purposes, showing error for empty fields
-      if (!email || !password) {
-        setError("Please enter both email and password");
+      if (!username || !password) {
+        setError("Please enter both username and password");
       }
     }, 1000);
   };
@@ -93,22 +116,22 @@ const LoginForm = () => {
                 {/* Login Form */}
                 <form onSubmit={handleSubmit}>
                   <div className="mb-3">
-                    <label htmlFor="email" className="form-label">
-                      Email Address
+                    <label htmlFor="username" className="form-label">
+                      Username
                     </label>
                     <div className="input-group">
                       <span className="input-group-text bg-light">
                         <User size={18} className="text-muted" />
                       </span>
                       <input
-                        type="email"
+                        type="username"
                         className="form-control"
-                        id="email"
-                        placeholder={`Enter your email${
+                        id="username"
+                        placeholder={`Enter your username${
                           userType === "admin" ? " (admin@medicpro.com)" : ""
                         }`}
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
                         required
                       />
                     </div>
@@ -187,7 +210,7 @@ const LoginForm = () => {
                     <div className="text-center">
                       <p className="text-muted mb-0">
                         Don't have an account?{" "}
-                        <a href="#register" className="text-primary">
+                        <a href="signup" className="text-primary">
                           Register Now
                         </a>
                       </p>
