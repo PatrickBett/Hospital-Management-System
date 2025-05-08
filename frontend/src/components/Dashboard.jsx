@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import AppointmentModal from "./AppointmentModal";
+import NewDoctorModal from "./NewDoctorModal";
 import {
   Container,
   Row,
@@ -14,6 +16,17 @@ import {
 function Dashboard() {
   const [role, setRole] = useState("");
   const [loading, setLoading] = useState(true);
+  const username = localStorage.getItem("username");
+  const [showModal, setShowModal] = useState(false);
+  const userId = 1;
+
+  const handleLogout = () => {
+    localStorage.removeItem("access");
+    localStorage.removeItem("refresh");
+    localStorage.removeItem("role"); // if you stored role
+    localStorage.removeItem("username");
+    window.location.href = "/login"; // or use React Router to navigate
+  };
 
   useEffect(() => {
     // Get role from localStorage
@@ -100,7 +113,9 @@ function Dashboard() {
             <h2 className="ms-4">Patient Dashboard</h2>
           </Col>
           <Col xs="auto" className="me-4">
-            <Button variant="outline-light">Profile</Button>
+            <Button variant="outline-light" onClick={handleLogout}>
+              Logout
+            </Button>
           </Col>
         </Row>
 
@@ -110,7 +125,7 @@ function Dashboard() {
             <Col>
               <Card className="shadow-sm">
                 <Card.Body>
-                  <h4>Welcome back, John Doe</h4>
+                  <h4>Welcome back, {username}</h4>
                   <p className="text-muted">
                     Your next appointment is on May 10, 2025 at 10:00 AM with
                     Dr. Smith
@@ -128,7 +143,14 @@ function Dashboard() {
                   <i className="bi bi-calendar-plus fs-1 mb-3 text-info"></i>
                   <h5>Book Appointment</h5>
                   <p>Schedule your next visit with our specialists</p>
-                  <Button variant="info">Book Now</Button>
+                  <Button variant="info" onClick={() => setShowModal(true)}>
+                    Book Now
+                  </Button>
+                  <AppointmentModal
+                    show={showModal}
+                    handleClose={() => setShowModal(false)}
+                    userId={userId}
+                  />
                 </Card.Body>
               </Card>
             </Col>
@@ -219,7 +241,9 @@ function Dashboard() {
             <h2 className="ms-4">Doctor Dashboard</h2>
           </Col>
           <Col xs="auto" className="me-4">
-            <Button variant="outline-light">Profile</Button>
+            <Button variant="outline-light" onClick={handleLogout}>
+              Logout
+            </Button>
           </Col>
         </Row>
 
@@ -382,7 +406,9 @@ function Dashboard() {
             <h2 className="ms-4">Admin Dashboard</h2>
           </Col>
           <Col xs="auto" className="me-4">
-            <Button variant="outline-light">Settings</Button>
+            <Button variant="outline-light" onClick={handleLogout}>
+              Logout
+            </Button>
           </Col>
         </Row>
 
@@ -433,10 +459,19 @@ function Dashboard() {
                 <Card.Body>
                   <Row>
                     <Col md={3} className="mb-3 mb-md-0">
-                      <Button variant="primary" className="w-100 py-3">
+                      <Button
+                        variant="primary"
+                        className="w-100 py-3"
+                        onClick={() => setShowModal(true)}
+                      >
                         <i className="bi bi-person-plus me-2"></i>
                         Add New Doctor
                       </Button>
+                      <NewDoctorModal
+                        show={showModal}
+                        handleClose={() => setShowModal(false)}
+                        userId={userId}
+                      />
                     </Col>
                     <Col md={3} className="mb-3 mb-md-0">
                       <Button variant="success" className="w-100 py-3">

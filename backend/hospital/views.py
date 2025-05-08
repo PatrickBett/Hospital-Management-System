@@ -35,9 +35,16 @@ class DepartmentView(APIView):
     
 # View to list all Apointments
 class AppointmentsView(APIView):
-    permission_classes = [IsAuthenticated] #Only authenticated users
+    # permission_classes = [IsAuthenticated] #Only authenticated users
 
     def get(self,request):
         appointments = Appointment.objects.all()
         serializer = AppointmentSerializer(appointments, many=True)
         return Response(serializer.data)
+    
+    def post(self, request):
+        serializer = AppointmentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)

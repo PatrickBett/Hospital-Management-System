@@ -31,6 +31,7 @@ const LoginForm = () => {
         localStorage.setItem("access_token", access);
         localStorage.setItem("refresh_token", refresh);
         localStorage.setItem("role", role);
+        localStorage.setItem("username", username);
 
         navigate("/dashboard");
       } catch (error) {
@@ -200,8 +201,7 @@ const LoginForm = () => {
                     ) : (
                       <span className="d-flex align-items-center justify-content-center">
                         <LogIn size={18} className="me-2" />
-                        Sign In as{" "}
-                        {userType.charAt(0).toUpperCase() + userType.slice(1)}
+                        Sign In
                       </span>
                     )}
                   </button>

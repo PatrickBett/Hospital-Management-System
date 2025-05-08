@@ -224,9 +224,10 @@ const HospitalLandingPage = () => {
           <div className="row align-items-center">
             <div className="col-lg-6 mb-4 mb-lg-0">
               <img
-                src="/api/placeholder/600/400"
+                src="https://www.philips.com/c-dam/corporate/newscenter/global/standard/resources/healthcare/2024/fhi-informatics-data-cut/header-global-future-health-index-data-cut.jpg"
                 alt="Healthcare professionals using the system"
                 className="img-fluid rounded shadow"
+                style={{ height: 400, objectFit: "cover" }}
               />
             </div>
             <div className="col-lg-6">
@@ -327,9 +328,10 @@ const HospitalLandingPage = () => {
                       style={{ width: 50, height: 50 }}
                     >
                       <img
-                        src="/api/placeholder/50/50"
+                        src="https://images.pexels.com/photos/3992656/pexels-photo-3992656.png"
                         alt="Dr. Johnson"
                         className="rounded-circle"
+                        style={{ width: 50, height: 50, objectFit: "cover" }}
                       />
                     </div>
                     <div>
@@ -364,9 +366,10 @@ const HospitalLandingPage = () => {
                       style={{ width: 50, height: 50 }}
                     >
                       <img
-                        src="/api/placeholder/50/50"
+                        src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg"
                         alt="James Wilson"
                         className="rounded-circle"
+                        style={{ width: 50, height: 50, objectFit: "cover" }}
                       />
                     </div>
                     <div>
@@ -401,9 +404,10 @@ const HospitalLandingPage = () => {
                       style={{ width: 50, height: 50 }}
                     >
                       <img
-                        src="/api/placeholder/50/50"
+                        src="https://images.pexels.com/photos/1181686/pexels-photo-1181686.jpeg"
                         alt="Emily Chen"
                         className="rounded-circle"
+                        style={{ width: 50, height: 50, objectFit: "cover" }}
                       />
                     </div>
                     <div>
