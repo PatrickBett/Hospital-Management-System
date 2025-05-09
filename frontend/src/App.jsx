@@ -1,7 +1,7 @@
 import "./App.css";
 import HospitalLandingPage from "./components/HospitalLandingPage";
 import LoginForm from "./components/LoginForm";
-import SignupForm from "./components/Signupform";
+import SignupForm from "./components/SignupForm";
 import Dashboard from "./components/Dashboard";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
