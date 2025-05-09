@@ -4,6 +4,8 @@ import axios from "axios";
 const NewDoctorModal = ({ show, handleClose }) => {
   const [formData, setFormData] = useState({
     doctorId: "",
+    experience: "",
+    phone: "",
     specialization: "",
   });
 
@@ -54,6 +56,39 @@ const NewDoctorModal = ({ show, handleClose }) => {
                   value={formData.doctorId}
                   onChange={handleChange}
                   placeholder="Enter doctor ID"
+                  required
+                />
+              </div>
+              <div className="mb-3">
+                <label className="form-label">First Name</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  name="firstname"
+                  value={formData.firstname}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div className="mb-3">
+                <label className="form-label">Experience</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  name="experience"
+                  value={formData.experience}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div className="mb-3">
+                <label className="form-label">Phone</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
                   required
                 />
               </div>

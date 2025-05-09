@@ -3,6 +3,8 @@ import { LogIn, User, Lock, Users, Shield } from "react-feather";
 import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+
 const LoginForm = () => {
   const [userType, setUserType] = useState("patient");
   const [username, setUsername] = useState("");
@@ -52,6 +54,32 @@ const LoginForm = () => {
       }
     }, 1000);
   };
+
+  const checkAccessToken = async () => {
+    const token = localStorage.getItem("access_token");
+    const refresh = localStorage.getItem("refresh_token");
+    console.log(refresh);
+    if (!token) return true;
+
+    const decode = jwtDecode(token);
+    const exp = decode.exp;
+    console.log("Expiry token", exp);
+    const now = Math.floor(Date.now() / 1000);
+    console.log("Now is :", now);
+
+    if (exp < now) {
+      const response = await axios.post(
+        "http://127.0.0.1:8000/api/token/refresh/",
+        {
+          refresh,
+        }
+      );
+      localStorage.setItem("access_token", response.data.access);
+    } else {
+      console.log("Access hasn't expired");
+    }
+  };
+  checkAccessToken();
 
   return (
     <div className="login-page bg-light min-vh-100 d-flex align-items-center">
