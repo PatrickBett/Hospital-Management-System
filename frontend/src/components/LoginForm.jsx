@@ -22,7 +22,7 @@ const LoginForm = () => {
     // Simulating authentication process
     setTimeout(async () => {
       // In a real application, you would handle authentication here
-      // and redirect based on user type and auth status
+      // and redirect based on user type and auth statuss
       try {
         const response = await axios.post("http://127.0.0.1:8000/api/token/", {
           username,
