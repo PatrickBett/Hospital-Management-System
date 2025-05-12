@@ -74,6 +74,7 @@ const LoginForm = () => {
           refresh,
         }
       );
+      navigate("/login");
       localStorage.setItem("access_token", response.data.access);
     } else {
       console.log("Access hasn't expired");
