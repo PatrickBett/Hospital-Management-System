@@ -26,7 +26,7 @@ class RoomView(APIView):
 
 # View to list all Departments
 class DepartmentView(APIView):
-    permission_classes = [IsAuthenticated] #Only authenticated users
+    # permission_classes = [IsAuthenticated] #Only authenticated users
 
     def get(self,request):
         departments = Department.objects.all()
