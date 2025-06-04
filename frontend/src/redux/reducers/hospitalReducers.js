@@ -27,7 +27,7 @@ const initialstate = {
   specializations: [
     {
       id: 1,
-      name: "Patrick Bett",
+      name: "Surgeon",
     },
   ],
 };

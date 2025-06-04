@@ -1,8 +1,10 @@
 from .models import CustomUser, Profile
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-
+from hospital.serializers import RoomSerializer,AppointmentSerializer
 class CustomUserSerializer(serializers.ModelSerializer):
+    
+    room = RoomSerializer(read_only=True)
     class Meta:
         model = CustomUser
         fields = '__all__'

@@ -51,10 +51,7 @@ const AppointmentModal = ({ show, handleClose, userId }) => {
     };
 
     try {
-      await axios.post(
-        "https://your-backend.com/api/appointments/",
-        appointment
-      );
+      await axios.post("http://127.0.0.1:8000/api/appointments/", appointment);
       alert("Appointment booked!");
       handleClose();
     } catch (err) {
@@ -87,15 +84,20 @@ const AppointmentModal = ({ show, handleClose, userId }) => {
             <div className="modal-body">
               <div className="mb-3">
                 <label className="form-label">Doctor</label>
-                <input
-                  type="text"
+                <select
                   className="form-control"
                   name="doctor"
                   value={formData.doctor}
                   onChange={handleChange}
-                  placeholder="Enter doctor"
                   required
-                />
+                >
+                  <option value="">Select Doctor</option>
+                  {doctors.map((doctor) => (
+                    <option key={doctor.id} value={doctor.id}>
+                      Dr {doctor.first_name}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div className="mb-3">
                 <label className="form-label">Department</label>
