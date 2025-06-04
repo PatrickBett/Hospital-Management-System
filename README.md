@@ -61,23 +61,23 @@ cd hospital-management-system
 
 ## Backend
 
-python -m venv env
-cd backend
-source env/bin/activate # or env\Scripts\activate on Windows
-pip install -r requirements.txt
-python manage.py migrate
-python manage.py runserver
+- python -m venv env
+- cd backend
+- source env/bin/activate # or env\Scripts\activate on Windows
+- pip install -r requirements.txt
+- python manage.py migrate
+- python manage.py runserver
 
 ## Frontend
 
-cd frontend
-npm install
-npm start
+- cd frontend
+- npm install
+- npm start
 
 ## Default Roles
 
-Admin: Full access to manage the system
+- Admin: Full access to manage the system
 
-Doctor: View and manage their appointments
+- Doctor: View and manage their appointments
 
-Patient: Book and manage appointments
+- Patient: Book and manage appointments
