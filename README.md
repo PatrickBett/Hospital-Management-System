@@ -54,8 +54,8 @@ cd hospital-management-system
 
 ## Backend
 
-cd backend
 python -m venv env
+cd backend
 source env/bin/activate # or env\Scripts\activate on Windows
 pip install -r requirements.txt
 python manage.py migrate
