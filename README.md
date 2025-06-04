@@ -40,17 +40,24 @@ This is a full-stack **Hospital Management System** built using **React**, **Red
 ```bash
 git clone https://github.com/PatrickBett/hospital-management-system.git
 cd hospital-management-system
+
+```
+
 # Patient dashboard on mobile and desktop view
+
 ![alt text](image.png)
 ![alt text](image-1.png)
+
 # Admin dashboard on mobile and desktop view
+
 ![alt text](image-2.png)
 ![alt text](image-3.png)
 ![alt text](image-4.png)
+
 # Doctor dashboard on mobile and desktop view
+
 ![alt text](image-5.png)
 ![alt text](image-6.png)
-```
 
 ## Backend
 
