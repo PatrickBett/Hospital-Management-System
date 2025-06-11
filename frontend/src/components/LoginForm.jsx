@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { LogIn, User, Lock, Users, Shield } from "react-feather";
 import "bootstrap/dist/css/bootstrap.min.css";
-import axios from "axios";
+import api from "../api";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
@@ -24,7 +24,7 @@ const LoginForm = () => {
       // In a real application, you would handle authentication here
       // and redirect based on user type and auth statuss
       try {
-        const response = await axios.post("http://127.0.0.1:8000/api/token/", {
+        const response = await api.post("api/token/", {
           username,
           password,
         });
@@ -68,12 +68,9 @@ const LoginForm = () => {
     console.log("Now is :", now);
 
     if (exp < now) {
-      const response = await axios.post(
-        "http://127.0.0.1:8000/api/token/refresh/",
-        {
-          refresh,
-        }
-      );
+      const response = await api.post("api/token/refresh/", {
+        refresh,
+      });
       navigate("/login");
       localStorage.setItem("access_token", response.data.access);
     } else {

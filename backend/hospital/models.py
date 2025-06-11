@@ -31,12 +31,18 @@ class Department(models.Model):
     
 
 class Appointment(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('confirmed', 'Confirmed'),
+        ('completed', 'Completed'),
+    ]
     patient = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="patient")
     doctor = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="doctor")
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
     date = models.DateField()
     time = models.TimeField()
     problem = models.TextField()
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
 
     def __str__(self):
         return f'Appointment By {self.patient} on {self.date}'

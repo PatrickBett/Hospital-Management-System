@@ -4,7 +4,8 @@ from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Room, Roomtype, Department, Appointment
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
+
 # Create your views here.
 # View to list all Room types
 class RoomTypeView(APIView):
@@ -38,13 +39,25 @@ class AppointmentsView(APIView):
     # permission_classes = [IsAuthenticated] #Only authenticated users
 
     def get(self,request):
-        appointments = Appointment.objects.all()
+        appointments = Appointment.objects.filter(patient=request.user)
         serializer = AppointmentSerializer(appointments, many=True)
         return Response(serializer.data)
     
     def post(self, request):
         serializer = AppointmentSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(patient=request.user)
+            print("Request user",request.user)
+            print("Self Request user",self.request.user)
             return Response(serializer.data)
+        print(serializer.errors)
         return Response(serializer.errors)
+    
+
+# View to list all Doctors Apointments
+class AppointmentsDoctorView(APIView):
+    
+    def get(self, request):
+        appointments = Appointment.objects.filter(doctor = request.user)
+        serializer = AppointmentSerializer(appointments, many = True)
+        return Response(serializer.data)

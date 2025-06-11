@@ -1,8 +1,5 @@
 from rest_framework import serializers
 from .models import Specialization,Doctordetail
-from members.serializers import CustomUserSerializer
-
-
 
 class SpecializationSerializer(serializers.ModelSerializer):
     
@@ -11,8 +8,7 @@ class SpecializationSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class DoctordetailSerializer(serializers.ModelSerializer):
-    doctor = CustomUserSerializer()
-    specialization = SpecializationSerializer()
+   
     class Meta:
         model = Doctordetail
         fields = '__all__'

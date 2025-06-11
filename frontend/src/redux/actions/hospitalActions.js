@@ -20,7 +20,12 @@ export const setappointments = (appointments) => {
     payload: appointments,
   };
 };
-
+export const setdoctorappointments = (doctorappointments) => {
+  return {
+    type: ActionTypes.SET_DOCTORAPPOINTMENTS,
+    payload: doctorappointments,
+  };
+};
 export const specializations = (specializations) => {
   return {
     type: ActionTypes.SET_SPECIALIZATIONS,

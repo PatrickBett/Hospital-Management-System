@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../api";
 import { useNavigate } from "react-router-dom";
 export default function SignupForm() {
   const navigate = useNavigate();
@@ -76,8 +76,8 @@ export default function SignupForm() {
       console.log("Form submitted successfully:", formData);
       //function to submit formdata to bbackend
 
-      axios
-        .post("http://127.0.0.1:8000/api/users/", formData)
+      api
+        .post("api/users/", formData)
         .then((response) => {
           console.log(response.data);
         })

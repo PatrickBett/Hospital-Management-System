@@ -1,8 +1,12 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../api";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { setappointments } from "../redux/actions/hospitalActions";
+
+// AppointmentModal component for booking a doctor's appointment
 const AppointmentModal = ({ show, handleClose, userId }) => {
+  // Form state for storing user input
   const [formData, setFormData] = useState({
     doctor: "",
     department: "",
@@ -12,54 +16,67 @@ const AppointmentModal = ({ show, handleClose, userId }) => {
   });
 
   const dispatch = useDispatch();
-  // fetching departments
+
+  // Fetch departments and store in Redux
   const departments = useSelector((state) => state.hospitalinfo.departments);
+  const appointments = useSelector((state) => state.hospitalinfo.appointments);
+
+  // Fetch doctors and store in Redux
   const doctors = useSelector((state) => state.hospitalinfo.doctors);
-  console.log(doctors);
+  console.log(doctors); // Debug: log doctor data to console
+
+  // Function to fetch departments from API
   const fetchDepartments = async () => {
-    const res = await axios.get("http://127.0.0.1:8000/api/departments");
-    console.log(res.data);
-    dispatch({ type: "SET_DEPARTMENTS", payload: res.data });
+    const res = await api.get("api/departments");
+    console.log("DEPARTMENTS", res.data); // Debug: log fetched departments
+    dispatch({ type: "SET_DEPARTMENTS", payload: res.data }); // Dispatch to Redux
   };
 
+  // useEffect to load departments on component mount
   useEffect(() => {
     fetchDepartments();
   }, []);
 
-  // fetching doctors
+  // Function to fetch all users and filter out doctors
   const fetchDoctors = async () => {
-    const res = await axios.get("http://127.0.0.1:8000/api/users");
-    const doctors = res.data.filter((user) => user.role === "doctor");
+    const res = await api.get("api/users");
+    const doctors = res.data.filter((user) => user.role === "doctor"); // Filter by role
     dispatch({
       type: "SET_DOCTORS",
       payload: doctors,
     });
   };
+
+  // useEffect to load doctors on component mount
   useEffect(() => {
     fetchDoctors();
   }, []);
 
+  // Handles change in form inputs
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  // Handles form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const appointment = {
-      patient: userId,
-      ...formData,
-    };
+    // const appointment = {
+    //   formData,
+    // };
 
     try {
-      await axios.post("http://127.0.0.1:8000/api/appointments/", appointment);
-      alert("Appointment booked!");
-      handleClose();
+      const res = await api.post("api/appointments/", formData);
+      const newAppointment = res.data;
+      dispatch(setappointments([...appointments, newAppointment]));
+      alert("Appointment booked!"); // Notify user
+      handleClose(); // Close modal
     } catch (err) {
-      console.error(err);
-      alert("Error booking appointment");
+      console.error(err); // Log error
+      alert("Error booking appointment"); // Notify error
     }
   };
 
+  // If modal is not supposed to show, return null
   if (!show) return null;
 
   return (
@@ -80,8 +97,10 @@ const AppointmentModal = ({ show, handleClose, userId }) => {
             ></button>
           </div>
 
+          {/* Appointment Form */}
           <form onSubmit={handleSubmit}>
             <div className="modal-body">
+              {/* Doctor Selection */}
               <div className="mb-3">
                 <label className="form-label">Doctor</label>
                 <select
@@ -99,6 +118,8 @@ const AppointmentModal = ({ show, handleClose, userId }) => {
                   ))}
                 </select>
               </div>
+
+              {/* Department Selection */}
               <div className="mb-3">
                 <label className="form-label">Department</label>
                 <select
@@ -116,6 +137,8 @@ const AppointmentModal = ({ show, handleClose, userId }) => {
                   ))}
                 </select>
               </div>
+
+              {/* Appointment Date */}
               <div className="mb-3">
                 <label className="form-label">Date</label>
                 <input
@@ -127,6 +150,8 @@ const AppointmentModal = ({ show, handleClose, userId }) => {
                   required
                 />
               </div>
+
+              {/* Appointment Time */}
               <div className="mb-3">
                 <label className="form-label">Time</label>
                 <input
@@ -138,6 +163,8 @@ const AppointmentModal = ({ show, handleClose, userId }) => {
                   required
                 />
               </div>
+
+              {/* Patient's Problem Description */}
               <div className="mb-3">
                 <label className="form-label">Describe Your Problem</label>
                 <textarea
@@ -152,6 +179,7 @@ const AppointmentModal = ({ show, handleClose, userId }) => {
               </div>
             </div>
 
+            {/* Form Actions */}
             <div className="modal-footer">
               <button type="submit" className="btn btn-success">
                 Book Appointment

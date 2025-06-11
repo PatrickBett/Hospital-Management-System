@@ -2,34 +2,11 @@ import { ActionTypes } from "../constants/action-types";
 //  the reducer takes the initialstate and the action
 
 const initialstate = {
-  departments: [
-    {
-      id: 1,
-      name: "Patrick Bett",
-    },
-  ],
-  doctors: [
-    {
-      id: 1,
-      name: "Patrick Bett",
-    },
-    {
-      id: 2,
-      name: "Patrick kip Bett",
-    },
-  ],
-  appointments: [
-    {
-      id: 1,
-      name: "Patrick Bett",
-    },
-  ],
-  specializations: [
-    {
-      id: 1,
-      name: "Surgeon",
-    },
-  ],
+  departments: [],
+  doctors: [],
+  appointments: [],
+  doctorappointments: [],
+  specializations: [],
 };
 export const HospitalReducer = (state = initialstate, { type, payload }) => {
   switch (type) {
@@ -49,6 +26,11 @@ export const HospitalReducer = (state = initialstate, { type, payload }) => {
       return {
         ...state,
         appointments: payload,
+      };
+    case ActionTypes.SET_DOCTORAPPOINTMENTS:
+      return {
+        ...state,
+        doctorappointments: payload,
       };
 
     case ActionTypes.SET_SPECIALIZATIONS:

@@ -12,12 +12,21 @@ import {
   Table,
   Badge,
 } from "react-bootstrap";
+import { setappointments } from "../redux/actions/hospitalActions";
+import { setdoctorappointments } from "../redux/actions/hospitalActions";
+import { useDispatch, useSelector } from "react-redux";
+import api from "../api";
 
 function Dashboard() {
   const [role, setRole] = useState("");
   const [loading, setLoading] = useState(true);
   const username = localStorage.getItem("username");
   const [showModal, setShowModal] = useState(false);
+  const dispatch = useDispatch();
+  const appointments = useSelector((state) => state.hospitalinfo.appointments);
+  const doctorappointments = useSelector(
+    (state) => state.hospitalinfo.doctorappointments
+  );
   const userId = 1;
 
   const handleLogout = () => {
@@ -35,33 +44,36 @@ function Dashboard() {
     setLoading(false);
   }, []);
 
-  // Mock data
-  const appointments = [
-    {
-      id: 1,
-      date: "2025-05-10",
-      time: "10:00 AM",
-      doctor: "Dr. Smith",
-      patient: "John Doe",
-      status: "Confirmed",
-    },
-    {
-      id: 2,
-      date: "2025-05-12",
-      time: "2:30 PM",
-      doctor: "Dr. Johnson",
-      patient: "Jane Smith",
-      status: "Pending",
-    },
-    {
-      id: 3,
-      date: "2025-05-15",
-      time: "11:15 AM",
-      doctor: "Dr. Williams",
-      patient: "Robert Brown",
-      status: "Completed",
-    },
-  ];
+  // fetching apppointments
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      try {
+        const res = await api.get("/api/appointments/");
+        console.log("Appointments", res.data);
+        dispatch(setappointments(res.data));
+      } catch (error) {
+        console.log("Failed to fetch appointments: ", error);
+      }
+    };
+    fetchAppointments();
+  }, []);
+
+  //fetching doctor appointments
+  useEffect(() => {
+    const fetchDoctorAppointments = async () => {
+      try {
+        const res = await api.get("/api/appointments/doctor/");
+        const newdoctorappointments = res.data;
+        console.log("DOCTOR APPOINTMENTS", res.data);
+        dispatch(setdoctorappointments([newdoctorappointments]));
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchDoctorAppointments();
+  }, [dispatch]);
+
+  // // Mock data
 
   const patients = [
     {
@@ -195,31 +207,39 @@ function Dashboard() {
                       </tr>
                     </thead>
                     <tbody>
-                      {appointments.map((app) => (
-                        <tr key={app.id}>
-                          <td>{app.date}</td>
-                          <td>{app.time}</td>
-                          <td>{app.doctor}</td>
-                          <td>
-                            <Badge
-                              bg={
-                                app.status === "Confirmed"
-                                  ? "success"
-                                  : app.status === "Pending"
-                                  ? "warning"
-                                  : "secondary"
-                              }
-                            >
-                              {app.status}
-                            </Badge>
-                          </td>
-                          <td>
-                            <Button size="sm" variant="outline-primary">
-                              Details
-                            </Button>
+                      {appointments && appointments.length > 0 ? (
+                        appointments.map((app) => (
+                          <tr key={app.id}>
+                            <td>{app.date}</td>
+                            <td>{app.time}</td>
+                            <td>{app.doctor}</td>
+                            <td>
+                              <Badge
+                                bg={
+                                  app.status === "Confirmed"
+                                    ? "success"
+                                    : app.status === "Pending"
+                                    ? "warning"
+                                    : "secondary"
+                                }
+                              >
+                                {app.status}
+                              </Badge>
+                            </td>
+                            <td>
+                              <Button size="sm" variant="outline-primary">
+                                Details
+                              </Button>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="5" className="text-center">
+                            Appointments Unavailable
                           </td>
                         </tr>
-                      ))}
+                      )}
                     </tbody>
                   </Table>
                 </Card.Body>
@@ -291,10 +311,28 @@ function Dashboard() {
               <Card className="shadow-sm">
                 <Card.Header className="bg-white d-flex justify-content-between align-items-center">
                   <h5 className="mb-0">Today's Schedule</h5>
-                  <Button variant="outline-success" size="sm">
+                  <Button
+                    variant="outline-success"
+                    size="sm"
+                    data-bs-toggle="modal"
+                    data-bs-target="#myModal"
+                  >
                     Add Appointment
                   </Button>
                 </Card.Header>
+
+                <div id="myModal" role="dialog" className="modal fade">
+                  <div className="modal-dialog">
+                    <div className="modal-content">
+                      <div className="modal-header"></div>
+                      <div className="modal-body">
+                        <p>Some text</p>
+                      </div>
+                      <div className="modal-footer"></div>
+                    </div>
+                  </div>
+                </div>
+
                 <Card.Body>
                   <Table hover responsive>
                     <thead>

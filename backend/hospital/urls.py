@@ -1,4 +1,4 @@
-from .views import RoomTypeView,RoomView,DepartmentView,AppointmentsView
+from .views import RoomTypeView,RoomView,DepartmentView,AppointmentsView, AppointmentsDoctorView
 from django.urls import path
 
 urlpatterns = [
@@ -6,4 +6,5 @@ urlpatterns = [
     path('rooms/', RoomView.as_view(),name="room"),
     path('departments/', DepartmentView.as_view(),name="departments"),
     path('appointments/', AppointmentsView.as_view(),name="appointments"),
+    path('appointments/doctor/', AppointmentsDoctorView.as_view(),name="doctorsappointments"),
 ]

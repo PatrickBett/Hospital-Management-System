@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Room, Roomtype, Department, Appointment
-
+# from members.serializers import CustomUserSerializer
 class RoomtypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Roomtype
@@ -17,6 +17,8 @@ class DepartmentSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class AppointmentSerializer(serializers.ModelSerializer):
+    # doctor = CustomUserSerializer()
     class Meta:
         model = Appointment
-        fields = '__all__'
+        fields = ['doctor', 'department', 'date', 'time', 'problem', 'patient','status']
+        read_only_fields = ['patient']  # prevent it from being required in POST
