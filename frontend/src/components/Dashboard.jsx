@@ -15,7 +15,6 @@ import {
 import { setappointments } from "../redux/actions/hospitalActions";
 import { setdoctorappointments } from "../redux/actions/hospitalActions";
 import { useDispatch, useSelector } from "react-redux";
-import AppointmentModal from "./AppointmentModal";
 
 import api from "../api";
 
