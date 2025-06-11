@@ -15,6 +15,8 @@ import {
 import { setappointments } from "../redux/actions/hospitalActions";
 import { setdoctorappointments } from "../redux/actions/hospitalActions";
 import { useDispatch, useSelector } from "react-redux";
+import AppointmentModal from "./AppointmentModal";
+
 import api from "../api";
 
 function Dashboard() {
@@ -27,6 +29,7 @@ function Dashboard() {
   const doctorappointments = useSelector(
     (state) => state.hospitalinfo.doctorappointments
   );
+
   const userId = 1;
 
   const handleLogout = () => {
@@ -208,11 +211,11 @@ function Dashboard() {
                     </thead>
                     <tbody>
                       {appointments && appointments.length > 0 ? (
-                        appointments.map((app) => (
-                          <tr key={app.id}>
+                        appointments.map((app, index) => (
+                          <tr key={index}>
                             <td>{app.date}</td>
                             <td>{app.time}</td>
-                            <td>{app.doctor}</td>
+                            <td>{app.doctor.first_name}</td>
                             <td>
                               <Badge
                                 bg={
@@ -234,7 +237,7 @@ function Dashboard() {
                           </tr>
                         ))
                       ) : (
-                        <tr>
+                        <tr key="no-appointments">
                           <td colSpan="5" className="text-center">
                             Appointments Unavailable
                           </td>
@@ -274,7 +277,9 @@ function Dashboard() {
               <Card className="shadow-sm bg-success bg-opacity-10">
                 <Card.Body className="text-center">
                   <h6 className="text-muted">Today's Appointments</h6>
-                  <h2 className="display-4 fw-bold text-success">8</h2>
+                  <h2 className="display-4 fw-bold text-success">
+                    {doctorappointments.flat().length}
+                  </h2>
                   <Button variant="outline-success" size="sm">
                     View Schedule
                   </Button>
@@ -337,6 +342,7 @@ function Dashboard() {
                   <Table hover responsive>
                     <thead>
                       <tr>
+                        <th>Date</th>
                         <th>Time</th>
                         <th>Patient</th>
                         <th>Purpose</th>
@@ -345,45 +351,34 @@ function Dashboard() {
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td>09:00 AM</td>
-                        <td>John Doe</td>
-                        <td>Follow-up</td>
-                        <td>
-                          <Badge bg="success">Checked In</Badge>
-                        </td>
-                        <td>
-                          <Button size="sm" variant="primary">
-                            Start Session
-                          </Button>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>10:30 AM</td>
-                        <td>Jane Smith</td>
-                        <td>Consultation</td>
-                        <td>
-                          <Badge bg="warning">Waiting</Badge>
-                        </td>
-                        <td>
-                          <Button size="sm" variant="outline-primary">
-                            View Details
-                          </Button>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>01:00 PM</td>
-                        <td>Robert Brown</td>
-                        <td>New Patient</td>
-                        <td>
-                          <Badge bg="secondary">Scheduled</Badge>
-                        </td>
-                        <td>
-                          <Button size="sm" variant="outline-primary">
-                            View Details
-                          </Button>
-                        </td>
-                      </tr>
+                      {doctorappointments.flat().length > 0 ? (
+                        doctorappointments
+                          .flat()
+                          .map((docappointment, index) => (
+                            <tr key={index}>
+                              <td>{docappointment.date}</td>
+                              <td>{docappointment.time}</td>
+                              <td>{docappointment.patient.first_name}</td>
+                              <td>{docappointment.problem}</td>
+                              <td>
+                                <Badge bg="success">
+                                  {docappointment.status}
+                                </Badge>
+                              </td>
+                              <td>
+                                <Button size="sm" variant="primary">
+                                  Start Session
+                                </Button>
+                              </td>
+                            </tr>
+                          ))
+                      ) : (
+                        <tr key="no-appointments">
+                          <td colSpan="6" className="text-center">
+                            Currently No Appointments available
+                          </td>
+                        </tr>
+                      )}
                     </tbody>
                   </Table>
                 </Card.Body>

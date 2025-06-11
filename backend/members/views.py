@@ -3,9 +3,9 @@ from .models import CustomUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.http import HttpResponse
-from .serializers import MyTokenObtainPairSerializer
+from .serializers import MyTokenObtainPairSerializer, CustomUserSerializer,ProfileSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
-from .serializers import CustomUserSerializer,ProfileSerializer
+
 # Create your views here.
 
 def home(request):

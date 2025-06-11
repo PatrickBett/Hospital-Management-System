@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Room, Roomtype, Department, Appointment
-# from members.serializers import CustomUserSerializer
+
 class RoomtypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Roomtype
@@ -16,9 +16,28 @@ class DepartmentSerializer(serializers.ModelSerializer):
         model = Department
         fields = '__all__'
 
+# Import the base class for creating serializers from Django REST Framework
 class AppointmentSerializer(serializers.ModelSerializer):
-    # doctor = CustomUserSerializer()
+    
+    # Override the default representation method to customize the serialized output
+    def to_representation(self, instance):
+        # Import CustomUserSerializer inside the method to avoid circular import issues
+        from members.serializers import CustomUserSerializer  # Lazy import
+
+        # Call the parent class’s to_representation to get the default serialized data
+        rep = super().to_representation(instance)
+
+        # Replace the default doctor ID with serialized doctor data
+        rep['doctor'] = CustomUserSerializer(instance.doctor).data
+
+        # Replace the default patient ID with serialized patient data
+        rep['patient'] = CustomUserSerializer(instance.patient).data
+
+        # Return the updated representation
+        return rep
+
+    # Inner class to specify metadata for the serializer
     class Meta:
-        model = Appointment
-        fields = ['doctor', 'department', 'date', 'time', 'problem', 'patient','status']
-        read_only_fields = ['patient']  # prevent it from being required in POST
+        model = Appointment  # The model this serializer is for
+        fields = ['doctor', 'department', 'date', 'time', 'problem', 'patient', 'status']  # Fields to include in serialization
+        read_only_fields = ['patient']  # Prevent the 'patient' field from being required in POST requests
