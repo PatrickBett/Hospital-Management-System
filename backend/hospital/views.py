@@ -36,7 +36,7 @@ class DepartmentView(APIView):
     
 # View to list all Apointments
 class AppointmentsView(APIView):
-    # permission_classes = [IsAuthenticated] #Only authenticated users
+    permission_classes = [IsAuthenticated] #Only authenticated users
 
     def get(self,request):
         appointments = Appointment.objects.filter(patient=request.user)
@@ -53,6 +53,28 @@ class AppointmentsView(APIView):
         print(serializer.errors)
         return Response(serializer.errors)
     
+class UpdateAppointmentStatusView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def patch(self,request,pk):
+        try:
+            appointment =  Appointment.objects.get(pk=pk)
+
+        except Appointment.DoesNotExist:
+            return Response({
+                "error":"Appointment not found"
+            })
+        
+        new_status = request.data.get("status")
+        if new_status not in dict(Appointment.STATUS_CHOICES):
+            return Response({
+                "error":"Invalid Status Value"
+            })
+        appointment.status = new_status
+        appointment.save()
+
+        return Response(AppointmentSerializer(appointment).data)
+    
 
 # View to list all Doctors Apointments
 class AppointmentsDoctorView(APIView):
@@ -61,3 +83,6 @@ class AppointmentsDoctorView(APIView):
         appointments = Appointment.objects.filter(doctor = request.user)
         serializer = AppointmentSerializer(appointments, many = True)
         return Response(serializer.data)
+    
+    
+    

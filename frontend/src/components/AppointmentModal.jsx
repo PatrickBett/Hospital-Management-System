@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setappointments } from "../redux/actions/hospitalActions";
 
 // AppointmentModal component for booking a doctor's appointment
-const AppointmentModal = ({ show, handleClose, userId }) => {
+const AppointmentModal = ({ show, handleClose }) => {
   // Form state for storing user input
   const [formData, setFormData] = useState({
     doctor: "",

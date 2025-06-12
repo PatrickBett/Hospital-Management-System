@@ -32,7 +32,7 @@ class AppointmentSerializer(serializers.ModelSerializer):
 
         # Replace the default patient ID with serialized patient data
         rep['patient'] = CustomUserSerializer(instance.patient).data
-
+        rep['id'] = instance.id
         # Return the updated representation
         return rep
 

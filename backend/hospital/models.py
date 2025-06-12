@@ -35,6 +35,7 @@ class Appointment(models.Model):
         ('pending', 'Pending'),
         ('confirmed', 'Confirmed'),
         ('completed', 'Completed'),
+        ('Denied', 'Denied'),
     ]
     patient = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="patient")
     doctor = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="doctor")

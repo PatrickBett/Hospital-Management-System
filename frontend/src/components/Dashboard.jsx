@@ -75,6 +75,27 @@ function Dashboard() {
     fetchDoctorAppointments();
   }, [dispatch]);
 
+  // Updating Appointment Approval
+  const handleStatusUpdate = async (id, status) => {
+    try {
+      await api.patch(`/api/appointments/${id}/update-status/`, {
+        status,
+      });
+      // Optionally reload or update state
+      // Update the state
+      const updatedAppointments = doctorappointments.map((group) =>
+        group.map((appointment) =>
+          appointment.id === id
+            ? { ...appointment, status: status }
+            : appointment
+        )
+      );
+      dispatch(setdoctorappointments(updatedAppointments));
+    } catch (error) {
+      console.error("Status update failed", error);
+    }
+  };
+
   // // Mock data
 
   const patients = [
@@ -218,11 +239,11 @@ function Dashboard() {
                             <td>
                               <Badge
                                 bg={
-                                  app.status === "Confirmed"
+                                  app.status === "confirmed"
                                     ? "success"
-                                    : app.status === "Pending"
-                                    ? "warning"
-                                    : "secondary"
+                                    : app.status === "Denied"
+                                    ? "danger"
+                                    : "warning"
                                 }
                               >
                                 {app.status}
@@ -320,6 +341,7 @@ function Dashboard() {
                     size="sm"
                     data-bs-toggle="modal"
                     data-bs-target="#myModal"
+                    onClick={() => setShowModal(true)}
                   >
                     Add Appointment
                   </Button>
@@ -360,21 +382,63 @@ function Dashboard() {
                               <td>{docappointment.patient.first_name}</td>
                               <td>{docappointment.problem}</td>
                               <td>
-                                <Badge bg="success">
+                                <Badge
+                                  bg={
+                                    docappointment.status === "confirmed"
+                                      ? "success"
+                                      : docappointment.status === "Denied"
+                                      ? "danger"
+                                      : "warning"
+                                  }
+                                >
                                   {docappointment.status}
                                 </Badge>
                               </td>
                               <td>
-                                <Button size="sm" variant="primary">
-                                  Start Session
-                                </Button>
+                                {docappointment.status === "pending" ? (
+                                  <>
+                                    <Button
+                                      size="sm"
+                                      variant="success"
+                                      className="me-2"
+                                      onClick={() =>
+                                        handleStatusUpdate(
+                                          docappointment.id,
+                                          "confirmed"
+                                        )
+                                      }
+                                    >
+                                      Approve
+                                    </Button>
+                                    <Button
+                                      size="sm"
+                                      variant="danger"
+                                      onClick={() =>
+                                        handleStatusUpdate(
+                                          docappointment.id,
+                                          "Denied"
+                                        )
+                                      }
+                                    >
+                                      Deny
+                                    </Button>
+                                  </>
+                                ) : docappointment.status === "confirmed" ? (
+                                  <Button size="sm" variant="primary">
+                                    Start Session
+                                  </Button>
+                                ) : (
+                                  <Button size="sm" variant="danger">
+                                    Delete
+                                  </Button>
+                                )}
                               </td>
                             </tr>
                           ))
                       ) : (
-                        <tr key="no-appointments">
+                        <tr>
                           <td colSpan="6" className="text-center">
-                            Currently No Appointments available
+                            Currently no appointments available.
                           </td>
                         </tr>
                       )}
