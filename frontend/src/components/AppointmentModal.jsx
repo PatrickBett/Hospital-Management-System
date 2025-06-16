@@ -113,7 +113,10 @@ const AppointmentModal = ({ show, handleClose }) => {
                   <option value="">Select Doctor</option>
                   {doctors.map((doctor) => (
                     <option key={doctor.id} value={doctor.id}>
-                      Dr {doctor.first_name}
+                      Dr {doctor.first_name} -{" "}
+                      {doctor.doctordetails?.specialization?.name
+                        ? doctor.doctordetails.specialization.name
+                        : ""}
                     </option>
                   ))}
                 </select>

@@ -12,7 +12,7 @@ import {
   Table,
   Badge,
 } from "react-bootstrap";
-import { setappointments } from "../redux/actions/hospitalActions";
+import { setappointments, setdoctors } from "../redux/actions/hospitalActions";
 import { setdoctorappointments } from "../redux/actions/hospitalActions";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -25,6 +25,9 @@ function Dashboard() {
   const [showModal, setShowModal] = useState(false);
   const dispatch = useDispatch();
   const appointments = useSelector((state) => state.hospitalinfo.appointments);
+  //fetched all users
+  const allusers = useSelector((state) => state.hospitalinfo.doctors);
+  console.log("This allusers", allusers);
   const doctorappointments = useSelector(
     (state) => state.hospitalinfo.doctorappointments
   );
@@ -95,6 +98,20 @@ function Dashboard() {
       console.error("Status update failed", error);
     }
   };
+  //fetching doctors(allusers)
+
+  useEffect(() => {
+    fetchDoctors();
+  }, []);
+  const fetchDoctors = async () => {
+    try {
+      const users = await api.get("/api/users/");
+
+      dispatch(setdoctors(users.data));
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   // // Mock data
 
@@ -122,11 +139,11 @@ function Dashboard() {
     },
   ];
 
-  const doctors = [
-    { id: 1, name: "Dr. Smith", specialty: "Cardiology", patients: 45 },
-    { id: 2, name: "Dr. Johnson", specialty: "Pediatrics", patients: 38 },
-    { id: 3, name: "Dr. Williams", specialty: "Neurology", patients: 27 },
-  ];
+  // const doctors = [
+  //   { id: 1, name: "Dr. Smith", specialty: "Cardiology", patients: 45 },
+  //   { id: 2, name: "Dr. Johnson", specialty: "Pediatrics", patients: 38 },
+  //   { id: 3, name: "Dr. Williams", specialty: "Neurology", patients: 27 },
+  // ];
 
   if (loading) {
     return (
@@ -235,7 +252,7 @@ function Dashboard() {
                           <tr key={index}>
                             <td>{app.date}</td>
                             <td>{app.time}</td>
-                            <td>{app.doctor.first_name}</td>
+                            <td>Dr. {app.doctor.first_name}</td>
                             <td>
                               <Badge
                                 bg={
@@ -310,7 +327,9 @@ function Dashboard() {
               <Card className="shadow-sm bg-primary bg-opacity-10">
                 <Card.Body className="text-center">
                   <h6 className="text-muted">Total Patients</h6>
-                  <h2 className="display-4 fw-bold text-primary">156</h2>
+                  <h2 className="display-4 fw-bold text-primary">
+                    {allusers.filter((user) => user.role === "patient").length}
+                  </h2>
                   <Button variant="outline-primary" size="sm">
                     Patient List
                   </Button>
@@ -515,7 +534,9 @@ function Dashboard() {
               <Card className="shadow-sm bg-primary bg-opacity-10">
                 <Card.Body className="text-center">
                   <h6 className="text-muted">Total Patients</h6>
-                  <h2 className="display-4 fw-bold text-primary">1,256</h2>
+                  <h2 className="display-4 fw-bold text-primary">
+                    {allusers.filter((user) => user.role === "patient").length}
+                  </h2>
                 </Card.Body>
               </Card>
             </Col>
@@ -523,7 +544,9 @@ function Dashboard() {
               <Card className="shadow-sm bg-success bg-opacity-10">
                 <Card.Body className="text-center">
                   <h6 className="text-muted">Total Doctors</h6>
-                  <h2 className="display-4 fw-bold text-success">32</h2>
+                  <h2 className="display-4 fw-bold text-success">
+                    {allusers.filter((user) => user.role === "doctor").length}
+                  </h2>
                 </Card.Body>
               </Card>
             </Col>
@@ -531,7 +554,9 @@ function Dashboard() {
               <Card className="shadow-sm bg-info bg-opacity-10">
                 <Card.Body className="text-center">
                   <h6 className="text-muted">Appointments</h6>
-                  <h2 className="display-4 fw-bold text-info">128</h2>
+                  <h2 className="display-4 fw-bold text-info">
+                    {appointments.length}
+                  </h2>
                 </Card.Body>
               </Card>
             </Col>
@@ -609,30 +634,64 @@ function Dashboard() {
                       <tr>
                         <th>Doctor Name</th>
                         <th>Specialty</th>
-                        <th>Patients</th>
+                        <th>Dr Number</th>
+                        <th>Experience</th>
+                        <th>Available</th>
                         <th>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {doctors.map((doctor) => (
-                        <tr key={doctor.id}>
-                          <td>{doctor.name}</td>
-                          <td>{doctor.specialty}</td>
-                          <td>{doctor.patients}</td>
-                          <td>
-                            <Button
-                              size="sm"
-                              variant="outline-primary"
-                              className="me-2"
-                            >
-                              Edit
-                            </Button>
-                            <Button size="sm" variant="outline-danger">
-                              Remove
-                            </Button>
-                          </td>
+                      {allusers.filter((user) => user.role === "doctor")
+                        .length > 0 ? (
+                        allusers
+                          .filter((user) => user.role === "doctor")
+                          .map((doctor, index) => (
+                            <tr key={index}>
+                              <td>Dr. {doctor.first_name}</td>
+                              <td>
+                                {doctor.doctordetails?.specialization?.name
+                                  ? doctor.doctordetails.specialization.name
+                                  : "Profile not updated"}
+                              </td>
+                              <td>{doctor.doctor_number}</td>
+                              <td>
+                                {doctor.doctordetails?.experience
+                                  ? doctor.doctordetails.experience
+                                  : "Profile not updated"}
+                              </td>
+                              <td>
+                                <Badge
+                                  bg={
+                                    doctor.doctordetails?.availability
+                                      ? "success"
+                                      : "danger"
+                                  }
+                                >
+                                  {doctor.doctordetails?.availability
+                                    ? "Available"
+                                    : "Not Available"}
+                                </Badge>
+                              </td>
+
+                              <td>
+                                <Button
+                                  size="sm"
+                                  variant="outline-primary"
+                                  className="me-2"
+                                >
+                                  Edit
+                                </Button>
+                                <Button size="sm" variant="outline-danger">
+                                  Remove
+                                </Button>
+                              </td>
+                            </tr>
+                          ))
+                      ) : (
+                        <tr>
+                          <td>No Doctors in your hospital</td>
                         </tr>
-                      ))}
+                      )}
                     </tbody>
                   </Table>
                 </Card.Body>
@@ -663,39 +722,47 @@ function Dashboard() {
                       </tr>
                     </thead>
                     <tbody>
-                      {appointments.map((app) => (
-                        <tr key={app.id}>
-                          <td>{app.date}</td>
-                          <td>{app.time}</td>
-                          <td>{app.patient}</td>
-                          <td>{app.doctor}</td>
-                          <td>
-                            <Badge
-                              bg={
-                                app.status === "Confirmed"
-                                  ? "success"
-                                  : app.status === "Pending"
-                                  ? "warning"
-                                  : "secondary"
-                              }
-                            >
-                              {app.status}
-                            </Badge>
-                          </td>
-                          <td>
-                            <Button
-                              size="sm"
-                              variant="outline-primary"
-                              className="me-2"
-                            >
-                              Edit
-                            </Button>
-                            <Button size="sm" variant="outline-danger">
-                              Cancel
-                            </Button>
+                      {appointments.length > 0 ? (
+                        appointments.map((app) => (
+                          <tr key={app.id}>
+                            <td>{app.date}</td>
+                            <td>{app.time}</td>
+                            <td>{app.patient.first_name}</td>
+                            <td>{app.doctor.first_name}</td>
+                            <td>
+                              <Badge
+                                bg={
+                                  app.status === "confirmed"
+                                    ? "warning"
+                                    : app.status === "pending"
+                                    ? "primary"
+                                    : "success"
+                                }
+                              >
+                                {app.status}
+                              </Badge>
+                            </td>
+                            <td>
+                              <Button
+                                size="sm"
+                                variant="outline-primary"
+                                className="me-2"
+                              >
+                                Edit
+                              </Button>
+                              <Button size="sm" variant="outline-danger">
+                                Cancel
+                              </Button>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="6" className="text-center">
+                            No appointments
                           </td>
                         </tr>
-                      ))}
+                      )}
                     </tbody>
                   </Table>
                 </Card.Body>

@@ -10,7 +10,9 @@ class Specialization(models.Model):
 
 
 class Doctordetail(models.Model):
-    doctor = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+
+    doctor = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='doctordetail')
+
     
     experience = models.IntegerField()
     phone = models.IntegerField()

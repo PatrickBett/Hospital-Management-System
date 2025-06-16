@@ -63,9 +63,8 @@ const LoginForm = () => {
 
     const decode = jwtDecode(token);
     const exp = decode.exp;
-    console.log("Expiry token", exp);
+
     const now = Math.floor(Date.now() / 1000);
-    console.log("Now is :", now);
 
     if (exp < now) {
       const response = await api.post("api/token/refresh/", {

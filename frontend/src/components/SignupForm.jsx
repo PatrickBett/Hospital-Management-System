@@ -66,7 +66,7 @@ export default function SignupForm() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const formErrors = validateForm();
@@ -76,15 +76,19 @@ export default function SignupForm() {
       console.log("Form submitted successfully:", formData);
       //function to submit formdata to bbackend
 
-      api
-        .post("api/users/", formData)
-        .then((response) => {
-          console.log(response.data);
-        })
-        .then(() => {
-          alert("Signed Up Successfully");
-          navigate("/login");
-        });
+      try {
+        await api
+          .post("api/users/", formData)
+          .then((response) => {
+            console.log(response.data);
+          })
+          .then(() => {
+            alert("Signed Up Successfully");
+            navigate("/login");
+          });
+      } catch (error) {
+        console.log(error);
+      }
 
       setSubmitStatus("success");
       setErrors({});
@@ -107,7 +111,7 @@ export default function SignupForm() {
         setSubmitStatus("");
       }, 3000);
     } else {
-      setErrors(formErrors);
+      setErrors("Error why form  got not submitted", formErrors);
       setSubmitStatus("error");
     }
   };

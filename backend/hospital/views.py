@@ -39,7 +39,10 @@ class AppointmentsView(APIView):
     permission_classes = [IsAuthenticated] #Only authenticated users
 
     def get(self,request):
-        appointments = Appointment.objects.filter(patient=request.user)
+        if request.user.role == "admin":
+            appointments = Appointment.objects.all()
+        else:
+            appointments = Appointment.objects.filter(patient=request.user)    
         serializer = AppointmentSerializer(appointments, many=True)
         return Response(serializer.data)
     
