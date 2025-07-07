@@ -15,9 +15,11 @@ const NewDoctorModal = ({ show, handleClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Doc details", formData);
 
     try {
-      await axios.post("https://your-backend.com/api/doctors/", formData);
+      await axios.post("api/doctordetails/", formData);
+      console.log("Doc details", formData);
       alert("Doctor added successfully!");
       handleClose();
     } catch (err) {

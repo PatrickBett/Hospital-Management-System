@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import AppointmentModal from "./AppointmentModal";
 import NewDoctorModal from "./NewDoctorModal";
+import { X, Send } from "lucide-react";
 import {
   Container,
   Row,
@@ -19,18 +20,44 @@ import { useDispatch, useSelector } from "react-redux";
 import api from "../api";
 
 function Dashboard() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [recipient, setRecipient] = useState("");
   const [role, setRole] = useState("");
   const [loading, setLoading] = useState(true);
   const username = localStorage.getItem("username");
   const [showModal, setShowModal] = useState(false);
   const dispatch = useDispatch();
   const appointments = useSelector((state) => state.hospitalinfo.appointments);
+  const doctors = useSelector((state) => state.hospitalinfo.doctors);
+  // console.log("All doctors", doctors);
   //fetched all users
   const allusers = useSelector((state) => state.hospitalinfo.doctors);
-  console.log("This allusers", allusers);
+  // console.log("This allusers", allusers);
   const doctorappointments = useSelector(
     (state) => state.hospitalinfo.doctorappointments
   );
+
+  const handleSubmit = () => {
+    if (message.trim() && recipient.trim()) {
+      // Here you would typically send the message to your backend
+      console.log("Sending message:", { recipient, message });
+
+      // Reset form and close modal
+      setMessage("");
+      setRecipient("");
+      setIsOpen(false);
+
+      // Show success feedback
+      alert("Message sent successfully!");
+    }
+  };
+
+  const handleClose = () => {
+    setIsOpen(false);
+    setMessage("");
+    setRecipient("");
+  };
 
   const userId = 1;
 
@@ -54,7 +81,7 @@ function Dashboard() {
     const fetchAppointments = async () => {
       try {
         const res = await api.get("/api/appointments/");
-        console.log("Appointments", res.data);
+        // console.log("Appointments", res.data);
         dispatch(setappointments(res.data));
       } catch (error) {
         console.log("Failed to fetch appointments: ", error);
@@ -69,7 +96,7 @@ function Dashboard() {
       try {
         const res = await api.get("/api/appointments/doctor/");
         const newdoctorappointments = res.data;
-        console.log("DOCTOR APPOINTMENTS", res.data);
+        // console.log("DOCTOR APPOINTMENTS", res.data);
         dispatch(setdoctorappointments([newdoctorappointments]));
       } catch (error) {
         console.log(error);
@@ -222,11 +249,104 @@ function Dashboard() {
                   <i className="bi bi-chat-dots fs-1 mb-3 text-warning"></i>
                   <h5>Message Doctor</h5>
                   <p>Get in touch with your healthcare provider</p>
-                  <Button variant="warning">Send Message</Button>
+                  {/* Trigger Button */}
+                  <Button variant="warning" onClick={() => setIsOpen(true)}>
+                    Send Message
+                  </Button>
                 </Card.Body>
               </Card>
             </Col>
           </Row>
+
+          <div className="container mt-5">
+            {/* Modal */}
+            {isOpen && (
+              <div
+                className="modal d-block"
+                tabIndex="-1"
+                style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+              >
+                <div className="modal-dialog modal-dialog-centered">
+                  <div className="modal-content">
+                    {/* Modal Header */}
+                    <div className="modal-header">
+                      <h5 className="modal-title">Send Message</h5>
+                      <button
+                        type="button"
+                        className="btn-close"
+                        onClick={handleClose}
+                        aria-label="Close"
+                      ></button>
+                    </div>
+
+                    {/* Modal Body */}
+                    <div className="modal-body">
+                      <div className="mb-3">
+                        <label className="form-label">Doctor</label>
+                        <select
+                          className="form-control"
+                          name="doctor"
+                          value={recipient}
+                          onChange={(e) => setRecipient(e.target.value)}
+                          required
+                        >
+                          <option value="">Select Doctor</option>
+                          {doctors.map((doctor) => (
+                            <option key={doctor.id} value={doctor.first_name}>
+                              Dr {doctor.first_name} -{" "}
+                              {doctor.doctordetails?.specialization?.name
+                                ? doctor.doctordetails.specialization.name
+                                : ""}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div className="mb-3">
+                        <label htmlFor="message" className="form-label">
+                          Message
+                        </label>
+                        <textarea
+                          id="message"
+                          className="form-control"
+                          value={message}
+                          onChange={(e) => setMessage(e.target.value)}
+                          placeholder="Type your message here..."
+                          rows="4"
+                          style={{ resize: "none" }}
+                        />
+                      </div>
+
+                      <div className="text-end">
+                        <small className="text-muted">
+                          {message.length}/500 characters
+                        </small>
+                      </div>
+                    </div>
+
+                    {/* Modal Footer */}
+                    <div className="modal-footer">
+                      <button
+                        type="button"
+                        className="btn btn-secondary"
+                        onClick={handleClose}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-primary d-flex align-items-center gap-2"
+                        onClick={handleSubmit}
+                      >
+                        <Send size={16} />
+                        Send
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
 
           {/* Appointments */}
           <Row className="mb-4">
@@ -313,7 +433,7 @@ function Dashboard() {
             <Col md={4} className="mb-3 mb-md-0">
               <Card className="shadow-sm bg-success bg-opacity-10">
                 <Card.Body className="text-center">
-                  <h6 className="text-muted">Today's Appointments</h6>
+                  <h6 className="text-muted">Appointments</h6>
                   <h2 className="display-4 fw-bold text-success">
                     {doctorappointments.flat().length}
                   </h2>

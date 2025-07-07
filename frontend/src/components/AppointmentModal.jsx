@@ -23,12 +23,12 @@ const AppointmentModal = ({ show, handleClose }) => {
 
   // Fetch doctors and store in Redux
   const doctors = useSelector((state) => state.hospitalinfo.doctors);
-  console.log(doctors); // Debug: log doctor data to console
+  // console.log(doctors); // Debug: log doctor data to console
 
   // Function to fetch departments from API
   const fetchDepartments = async () => {
     const res = await api.get("api/departments");
-    console.log("DEPARTMENTS", res.data); // Debug: log fetched departments
+    // console.log("DEPARTMENTS", res.data); // Debug: log fetched departments
     dispatch({ type: "SET_DEPARTMENTS", payload: res.data }); // Dispatch to Redux
   };
 

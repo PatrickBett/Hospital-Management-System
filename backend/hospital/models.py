@@ -1,6 +1,6 @@
 from django.db import models
 from members.models import CustomUser
-
+from django.core.exceptions import ValidationError
 # Create your models here.
 
 #Room Types i.e wards, maternity
@@ -60,3 +60,15 @@ class Medicine(models.Model):
     def __str__(self):
         return f'{self.name} - quantity is {self.quantity_in_stock}'
 
+class Message(models.Model):
+    doctor = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='doctormessage')
+    patient = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='patientmessage', blank=True, null=True)
+    message = models.TextField()
+    def clean(self):
+        if self.doctor.role != 'doctor':
+            raise ValidationError("The assigned user must have a 'doctor'.")
+        elif self.patient.role !='patient':
+            raise ValidationError("The assignemd user must be a patient")
+
+    def __str__(self):
+        return str(self.doctor)
