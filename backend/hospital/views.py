@@ -1,9 +1,9 @@
 from django.shortcuts import render
-from .serializers import RoomSerializer,RoomtypeSerializer,DepartmentSerializer,AppointmentSerializer
+from .serializers import RoomSerializer,RoomtypeSerializer,DepartmentSerializer,AppointmentSerializer, MessageSerializer
 from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import Room, Roomtype, Department, Appointment
+from .models import Room, Roomtype, Department, Appointment, Message
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
 # Create your views here.
@@ -88,4 +88,23 @@ class AppointmentsDoctorView(APIView):
         return Response(serializer.data)
     
     
+class MessageView(APIView):
+    # permission_classes = [IsAuthenticated]
+    def get(self,request):
+        user = request.user
+        if user.role == 'doctor':
+            messages = Message.objects.filter(doctor = user)
+        elif user.role == 'patient':
+            messages = Message.objects.filter(patient = user)
+        else:
+            messages = Message.objects.none()
+        serializer = MessageSerializer(messages, many=True)
+        return Response(serializer.data)
     
+    def post(self, request):
+        user = request.user
+        message_text = request.data.get("message")
+        recipient_id = request.data.get("recipient")
+
+       
+

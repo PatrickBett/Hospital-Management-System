@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Room, Roomtype, Department, Appointment
+from .models import Room, Roomtype, Department, Appointment, Message
 
 class RoomtypeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -41,3 +41,10 @@ class AppointmentSerializer(serializers.ModelSerializer):
         model = Appointment  # The model this serializer is for
         fields = ['doctor', 'department', 'date', 'time', 'problem', 'patient', 'status']  # Fields to include in serialization
         read_only_fields = ['patient']  # Prevent the 'patient' field from being required in POST requests
+
+
+class MessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Message
+        fields = '__all__'
+        
