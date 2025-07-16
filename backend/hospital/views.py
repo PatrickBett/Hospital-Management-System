@@ -3,7 +3,7 @@ from .serializers import RoomSerializer,RoomtypeSerializer,DepartmentSerializer,
 from rest_framework.generics import ListAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import Room, Roomtype, Department, Appointment, Message
+from .models import Room, Roomtype, Department, Appointment, Message, CustomUser
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
 # Create your views here.
@@ -102,9 +102,23 @@ class MessageView(APIView):
         return Response(serializer.data)
     
     def post(self, request):
-        user = request.user
-        message_text = request.data.get("message")
-        recipient_id = request.data.get("recipient")
+        serializer = MessageSerializer(data = request.data)
+        if serializer.is_valid():
+             patient = request.user
+             message = request.data.get("message")
+             doctor_id= request.data.get("doctor")
+
+             try:
+                 doctor = CustomUser.objects.get(id =doctor_id, role = 'doctor')
+                 
+             except CustomUser.DoesNotExist:
+                 return Response({"error":"Doctor not found"})
+             serializer.save(doctor = doctor, patient = patient, message = message)
+             return Response(serializer.data)
+
+        return Response(serializer.errors)
+
+        
 
        
 

@@ -71,4 +71,4 @@ class Message(models.Model):
             raise ValidationError("The assignemd user must be a patient")
 
     def __str__(self):
-        return str(self.doctor)
+        return f'Message from {self.patient} to {self.doctor} '

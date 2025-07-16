@@ -13,7 +13,11 @@ import {
   Table,
   Badge,
 } from "react-bootstrap";
-import { setappointments, setdoctors } from "../redux/actions/hospitalActions";
+import {
+  setappointments,
+  setdoctors,
+  setmessages,
+} from "../redux/actions/hospitalActions";
 import { setdoctorappointments } from "../redux/actions/hospitalActions";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -30,6 +34,7 @@ function Dashboard() {
   const dispatch = useDispatch();
   const appointments = useSelector((state) => state.hospitalinfo.appointments);
   const doctors = useSelector((state) => state.hospitalinfo.doctors);
+  const messages = useSelector((state) => state.hospitalinfo.messages);
   // console.log("All doctors", doctors);
   //fetched all users
   const allusers = useSelector((state) => state.hospitalinfo.doctors);
@@ -37,27 +42,53 @@ function Dashboard() {
   const doctorappointments = useSelector(
     (state) => state.hospitalinfo.doctorappointments
   );
+  // function to post message to a doctor
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const data = {
+      message: message,
+      doctor: recipient,
+    };
 
-  const handleSubmit = () => {
-    if (message.trim() && recipient.trim()) {
-      // Here you would typically send the message to your backend
-      console.log("Sending message:", { recipient, message });
-
-      // Reset form and close modal
-      setMessage("");
-      setRecipient("");
-      setIsOpen(false);
-
-      // Show success feedback
-      alert("Message sent successfully!");
+    // Here you typically send the message to your backend
+    try {
+      const res = await api.post("/api/messages/", data);
+      console.log("Submiited", data);
+      console.log("Submiited", res);
+      fetchMessages();
+    } catch (error) {
+      console.log(error);
     }
-  };
 
+    // Reset form and close modal
+    setMessage("");
+    setRecipient("");
+    setIsOpen(false);
+
+    // Show success feedback
+    alert("Message sent successfully!");
+  };
   const handleClose = () => {
     setIsOpen(false);
     setMessage("");
     setRecipient("");
   };
+
+  //fetching messages
+  const fetchMessages = async () => {
+    try {
+      const fetchedmessages = await api.get("/api/messages");
+
+      dispatch(setmessages(fetchedmessages.data));
+      console.log("Fetched Messages", fetchedmessages.data);
+    } catch (error) {
+      console.log("Error fetching data", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchMessages();
+  }, []);
 
   const userId = 1;
 
@@ -250,8 +281,15 @@ function Dashboard() {
                   <h5>Message Doctor</h5>
                   <p>Get in touch with your healthcare provider</p>
                   {/* Trigger Button */}
-                  <Button variant="warning" onClick={() => setIsOpen(true)}>
+                  <Button
+                    variant="warning"
+                    className="me-4"
+                    onClick={() => setIsOpen(true)}
+                  >
                     Send Message
+                  </Button>
+                  <Button variant="primary" onClick={() => setIsOpen(true)}>
+                    View Messages
                   </Button>
                 </Card.Body>
               </Card>
@@ -292,7 +330,7 @@ function Dashboard() {
                         >
                           <option value="">Select Doctor</option>
                           {doctors.map((doctor) => (
-                            <option key={doctor.id} value={doctor.first_name}>
+                            <option key={doctor.id} value={doctor.id}>
                               Dr {doctor.first_name} -{" "}
                               {doctor.doctordetails?.specialization?.name
                                 ? doctor.doctordetails.specialization.name
@@ -430,7 +468,7 @@ function Dashboard() {
         <Container>
           {/* Stats Cards */}
           <Row className="mb-4">
-            <Col md={4} className="mb-3 mb-md-0">
+            <Col md={3} className="mb-3 mb-md-0">
               <Card className="shadow-sm bg-success bg-opacity-10">
                 <Card.Body className="text-center">
                   <h6 className="text-muted">Appointments</h6>
@@ -443,7 +481,7 @@ function Dashboard() {
                 </Card.Body>
               </Card>
             </Col>
-            <Col md={4} className="mb-3 mb-md-0">
+            <Col md={3} className="mb-3 mb-md-0">
               <Card className="shadow-sm bg-primary bg-opacity-10">
                 <Card.Body className="text-center">
                   <h6 className="text-muted">Total Patients</h6>
@@ -456,13 +494,26 @@ function Dashboard() {
                 </Card.Body>
               </Card>
             </Col>
-            <Col md={4}>
+            <Col md={3}>
               <Card className="shadow-sm bg-warning bg-opacity-10">
                 <Card.Body className="text-center">
                   <h6 className="text-muted">Pending Reports</h6>
                   <h2 className="display-4 fw-bold text-warning">5</h2>
                   <Button variant="outline-warning" size="sm">
                     View Reports
+                  </Button>
+                </Card.Body>
+              </Card>
+            </Col>
+            <Col md={3} className="mb-3 mb-md-0">
+              <Card className="shadow-sm bg-primary bg-opacity-10">
+                <Card.Body className="text-center">
+                  <h6 className="text-muted">Notifications</h6>
+                  <h2 className="display-4 fw-bold text-primary">
+                    {messages.length}
+                  </h2>
+                  <Button variant="outline-primary" size="sm">
+                    View Messages
                   </Button>
                 </Card.Body>
               </Card>

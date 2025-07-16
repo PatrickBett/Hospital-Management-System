@@ -26,16 +26,23 @@ export const setdoctorappointments = (doctorappointments) => {
     payload: doctorappointments,
   };
 };
-export const specializations = (specializations) => {
+export const setspecializations = (specializations) => {
   return {
     type: ActionTypes.SET_SPECIALIZATIONS,
     payload: specializations,
   };
 };
 
-export const rooms = (rooms) => {
+export const setrooms = (rooms) => {
   return {
     type: ActionTypes.SET_ROOMS,
     payload: rooms,
+  };
+};
+
+export const setmessages = (messages) => {
+  return {
+    type: ActionTypes.SET_MESSAGES,
+    payload: messages,
   };
 };

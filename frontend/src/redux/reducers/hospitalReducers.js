@@ -7,6 +7,7 @@ const initialstate = {
   appointments: [],
   doctorappointments: [],
   specializations: [],
+  messages: [],
 };
 export const HospitalReducer = (state = initialstate, { type, payload }) => {
   switch (type) {
@@ -43,6 +44,11 @@ export const HospitalReducer = (state = initialstate, { type, payload }) => {
       return {
         ...state,
         rooms: payload,
+      };
+    case ActionTypes.SET_MESSAGES:
+      return {
+        ...state,
+        messages: payload,
       };
 
     default:
