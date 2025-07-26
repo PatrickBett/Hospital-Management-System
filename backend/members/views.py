@@ -9,9 +9,14 @@ from .serializers import MyTokenObtainPairSerializer, CustomUserSerializer,Profi
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.conf import settings
+
+
+GOOGLE_CLIENT_ID = settings.GOOGLE_CLIENT_ID
 # Create your views here.
 
 def home(request):
+    
     return HttpResponse("Hospital Management System API")
 
 class CustomUserListView(APIView):
@@ -31,7 +36,7 @@ class CustomUserListView(APIView):
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
-
+# Authenticate user using Oauth 2
 class GoogleLoginView(APIView):
     permission_classes = [AllowAny]
     def post(self,request):

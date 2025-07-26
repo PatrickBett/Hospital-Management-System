@@ -1,4 +1,6 @@
-
+from dotenv import load_dotenv
+import os
+load_dotenv()
 
 from pathlib import Path
 
@@ -145,3 +147,6 @@ SIMPLE_JWT = {
     "SIGNING_KEY": SECRET_KEY,
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
+
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+GOOGLE_CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
