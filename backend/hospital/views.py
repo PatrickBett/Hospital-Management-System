@@ -98,8 +98,17 @@ class MessageView(APIView):
             messages = Message.objects.filter(patient = user)
         else:
             messages = Message.objects.none()
-        serializer = MessageSerializer(messages, many=True)
-        return Response(serializer.data)
+        
+        message_data = []
+        for message in messages:
+            message_dict = {
+                "id": message.id,
+                "message": message.message,
+                "doctor": message.doctor.username,
+                "patient": message.patient.username,
+            }
+            message_data.append(message_dict)
+        return Response(message_data)
     
     def post(self, request):
         serializer = MessageSerializer(data = request.data)

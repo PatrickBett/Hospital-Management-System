@@ -3,6 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import AppointmentModal from "./AppointmentModal";
 import NewDoctorModal from "./NewDoctorModal";
 import { X, Send } from "lucide-react";
+import Inbox from "./Inbox";
 import {
   Container,
   Row,
@@ -31,6 +32,8 @@ function Dashboard() {
   const [loading, setLoading] = useState(true);
   const username = localStorage.getItem("username");
   const [showModal, setShowModal] = useState(false);
+  const [showInbox, setShowInbox] = useState(false);
+
   const dispatch = useDispatch();
   const appointments = useSelector((state) => state.hospitalinfo.appointments);
   const doctors = useSelector((state) => state.hospitalinfo.doctors);
@@ -289,7 +292,7 @@ function Dashboard() {
                     Send Message
                   </Button>
                   <Button variant="primary" onClick={() => setIsOpen(true)}>
-                    View Messages
+                    <a href="inbox">View Messages</a>
                   </Button>
                 </Card.Body>
               </Card>
@@ -512,13 +515,31 @@ function Dashboard() {
                   <h2 className="display-4 fw-bold text-primary">
                     {messages.length}
                   </h2>
-                  <Button variant="outline-primary" size="sm">
-                    View Messages
+                  <Button
+                    variant="outline-primary"
+                    size="sm"
+                    onClick={() => setShowInbox((prev) => !prev)}
+                  >
+                    {showInbox ? "Hide Messages" : "View Messages"}
                   </Button>
                 </Card.Body>
               </Card>
             </Col>
           </Row>
+          <button
+            className="btn btn-outline-primary"
+            onClick={() =>
+              (window.location.href = "http://localhost:8000/calendar/auth")
+            }
+          >
+            Connect to Google Calendar
+          </button>
+
+          {showInbox && (
+            <Row className="mb-4">
+              <Inbox messages={messages} />
+            </Row>
+          )}
 
           {/* Today's Schedule */}
           <Row className="mb-4">

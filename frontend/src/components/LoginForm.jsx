@@ -4,7 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import api from "../api";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-
+import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 const LoginForm = () => {
   const [userType, setUserType] = useState("patient");
   const [username, setUsername] = useState("");
@@ -13,6 +13,29 @@ const LoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  //function to set up google signin
+  const responseGoogle = async (response) => {
+    const credentials = response.credential;
+
+    try {
+      const res = await api.post("/api/google-login", {
+        token: credentials,
+        userType: userType,
+      });
+      localStorage.setItem("access_token", res.data.access_token);
+      localStorage.setItem("refresh_token", res.data.refresh_token);
+      localStorage.setItem("role", res.data.role);
+      navigate("/dashboard");
+      console.log(res.data);
+    } catch (error) {
+      console.log(error);
+      alert(error);
+    }
+    console.log(jwtDecode(credentials));
+  };
+  const responseError = (error) => {
+    console.log(error);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -89,7 +112,6 @@ const LoginForm = () => {
                   <h3 className="fw-bold text-primary mb-1">MediCare Pro</h3>
                   <p className="text-muted">Sign in to access your account</p>
                 </div>
-
                 {/* User Type Selector */}
                 <div className="user-type-selector mb-4">
                   <div className="d-flex justify-content-between border rounded p-1 bg-light">
@@ -131,16 +153,14 @@ const LoginForm = () => {
                     </button>
                   </div>
                 </div>
-
                 {/* Error Message */}
                 {error && (
                   <div className="alert alert-danger py-2" role="alert">
                     {error}
                   </div>
                 )}
-
                 {/* Login Form */}
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} className="mb-3">
                   <div className="mb-3">
                     <label htmlFor="username" className="form-label">
                       Username
@@ -242,7 +262,18 @@ const LoginForm = () => {
                     </div>
                   )}
                 </form>
+                <div className="mb-3">
+                  <h5 className="text-center">OR</h5>
+                </div>
 
+                <GoogleOAuthProvider clientId="19682570152-dvs7v9kbjvqf7i6t8mjdipo2i59j6knq.apps.googleusercontent.com">
+                  <GoogleLogin
+                    onSuccess={responseGoogle}
+                    onError={responseError}
+                    cookiePolicy={"single_host_origin"}
+                    scope="https://www.googleapis.com/auth/calendar.events"
+                  />
+                </GoogleOAuthProvider>
                 {/* Additional Information */}
                 {userType === "doctor" && (
                   <div className="mt-4 pt-3 border-top">
@@ -255,7 +286,6 @@ const LoginForm = () => {
                     </div>
                   </div>
                 )}
-
                 {userType === "admin" && (
                   <div className="mt-4 pt-3 border-top">
                     <div className="alert alert-info py-2" role="alert">
