@@ -4,6 +4,7 @@ import AppointmentModal from "./AppointmentModal";
 import NewDoctorModal from "./NewDoctorModal";
 import { X, Send } from "lucide-react";
 import Inbox from "./Inbox";
+import NextAppointmentNotice from "./NextAppointmentNotice";
 import {
   Container,
   Row,
@@ -239,10 +240,9 @@ function Dashboard() {
               <Card className="shadow-sm">
                 <Card.Body>
                   <h4>Welcome back, {username}</h4>
-                  <p className="text-muted">
-                    Your next appointment is on May 10, 2025 at 10:00 AM with
-                    Dr. Smith
-                  </p>
+                  {/* <p className="text-muted"> */}
+                  <NextAppointmentNotice appointments={appointments} />
+                  {/* </p> */}
                 </Card.Body>
               </Card>
             </Col>
@@ -409,31 +409,37 @@ function Dashboard() {
                     </thead>
                     <tbody>
                       {appointments && appointments.length > 0 ? (
-                        appointments.map((app, index) => (
-                          <tr key={index}>
-                            <td>{app.date}</td>
-                            <td>{app.time}</td>
-                            <td>Dr. {app.doctor.first_name}</td>
-                            <td>
-                              <Badge
-                                bg={
-                                  app.status === "confirmed"
-                                    ? "success"
-                                    : app.status === "Denied"
-                                    ? "danger"
-                                    : "warning"
-                                }
-                              >
-                                {app.status}
-                              </Badge>
-                            </td>
-                            <td>
-                              <Button size="sm" variant="outline-primary">
-                                Details
-                              </Button>
-                            </td>
-                          </tr>
-                        ))
+                        [...appointments]
+                          .sort((a, b) => {
+                            const dateA = new Date(`${a.date}T${a.time}`);
+                            const dateB = new Date(`${b.date}T${b.time}`);
+                            return dateA - dateB;
+                          })
+                          .map((app, index) => (
+                            <tr key={index}>
+                              <td>{app.date}</td>
+                              <td>{app.time}</td>
+                              <td>Dr. {app.doctor.first_name}</td>
+                              <td>
+                                <Badge
+                                  bg={
+                                    app.status === "confirmed"
+                                      ? "success"
+                                      : app.status === "Denied"
+                                      ? "danger"
+                                      : "warning"
+                                  }
+                                >
+                                  {app.status}
+                                </Badge>
+                              </td>
+                              <td>
+                                <Button size="sm" variant="outline-primary">
+                                  Details
+                                </Button>
+                              </td>
+                            </tr>
+                          ))
                       ) : (
                         <tr key="no-appointments">
                           <td colSpan="5" className="text-center">
