@@ -7,6 +7,7 @@ This is a full-stack **Hospital Management System** built using **React**, **Red
 ## 🚀 Features
 
 - 🔐 **JWT Authentication** with role-based access (Patient, Doctor, Admin)
+- 🔐 **OAuth Authentication** with role-based access (Patient, Doctor, Admin)
 - 👨‍⚕️ **Doctor Dashboard**: View appointments, manage schedules
 - 👩‍💼 **Admin Dashboard**: Manage users, appointments, doctors, and patients
 - 🧑‍💊 **Patient Dashboard**: Book appointments, view doctor availability

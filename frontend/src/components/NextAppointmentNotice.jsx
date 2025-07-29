@@ -1,43 +1,39 @@
-import { parse, format } from "date-fns";
-
-const getNextAppointment = (appointments) => {
-  const now = new Date();
-  console.log("Your appointments", appointments);
-
-  return appointments
-    .map((app) => {
-      const dateTimeString = `${app.date} ${app.time}`;
-      const parsedDate = parse(
-        dateTimeString,
-        "MMMM d, yyyy h:mm a",
-        new Date()
-      );
-      return {
-        ...app,
-        datetime: parsedDate,
-      };
-    })
-    .filter((app) => app.datetime > now)
-    .sort((a, b) => a.datetime - b.datetime)[0]; // nearest future appointment
-};
+import React from "react";
 
 const NextAppointmentNotice = ({ appointments }) => {
   if (!appointments || appointments.length === 0) return null;
 
-  const next = getNextAppointment(appointments);
+  const getNextAppointment = () => {
+    const now = new Date();
 
-  if (!next) {
-    return <p>You have no upcoming appointments.</p>;
-  }
+    const futureAppointments = appointments
+      .map((app) => {
+        const dateTimeString = `${app.date}T${app.time}`;
+        const appointmentDate = new Date(dateTimeString);
+        return { ...app, appointmentDate };
+      })
+      .filter((app) => app.appointmentDate > now)
+      .sort((a, b) => a.appointmentDate - b.appointmentDate);
 
-  const formattedDate = format(next.datetime, "MMMM d, yyyy");
-  const formattedTime = format(next.datetime, "h:mm a");
+    return futureAppointments.length > 0 ? futureAppointments[0] : null;
+  };
+
+  const nextApp = getNextAppointment();
+
+  if (!nextApp) return <p>No upcoming appointments.</p>;
 
   return (
-    <p>
-      Your next appointment is on {formattedDate} at {formattedTime} with Dr.{" "}
-      {next.doctor.first_name}
-    </p>
+    <div className="alert alert-info">
+      Your next appointment is on{" "}
+      <strong>{nextApp.appointmentDate.toLocaleDateString()}</strong> at{" "}
+      <strong>
+        {nextApp.appointmentDate.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })}
+      </strong>{" "}
+      with <strong>Dr. {nextApp.doctor?.first_name || "Unavailable"}</strong>.
+    </div>
   );
 };
 
