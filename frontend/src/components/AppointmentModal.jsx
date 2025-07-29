@@ -182,6 +182,19 @@ const AppointmentModal = ({ show, handleClose }) => {
               </div>
             </div>
 
+            <div className="mb-3">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                // checked={consent}
+                // onChange={() => setConsent(!consent)}
+                id="calendarConsent"
+              />
+              <label className="form-check-label" htmlFor="calendarConsent">
+                Connect to Google Calendar
+              </label>
+            </div>
+
             {/* Form Actions */}
             <div className="modal-footer">
               <button type="submit" className="btn btn-success">

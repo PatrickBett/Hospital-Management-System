@@ -52,7 +52,7 @@ const LoginForm = () => {
           password,
         });
         const { access, refresh, role } = response.data;
-        console.log(response.data);
+        // console.log(response.data);
         localStorage.setItem("access_token", access);
         localStorage.setItem("refresh_token", refresh);
         localStorage.setItem("role", role);
@@ -63,12 +63,12 @@ const LoginForm = () => {
         console.log(error);
       }
 
-      console.log("Login attempt:", {
-        userType,
-        username,
-        password,
-        rememberMe,
-      });
+      // console.log("Login attempt:", {
+      //   userType,
+      //   username,
+      //   password,
+      //   rememberMe,
+      // });
       setIsLoading(false);
 
       // For demo purposes, showing error for empty fields
@@ -81,7 +81,7 @@ const LoginForm = () => {
   const checkAccessToken = async () => {
     const token = localStorage.getItem("access_token");
     const refresh = localStorage.getItem("refresh_token");
-    console.log(refresh);
+
     if (!token) return true;
 
     const decode = jwtDecode(token);

@@ -8,6 +8,9 @@ import Calendar from "./components/Calendar";
 import ViewMessage from "../ViewMessage";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js"; // includes Popper
+
 function App() {
   return (
     <>
