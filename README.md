@@ -31,6 +31,7 @@ This is a full-stack **Hospital Management System** built using **React**, **Red
 - Django
 - Django REST Framework (DRF)
 - JWT Authentication (using `djangorestframework-simplejwt`)
+- Google OAuth authentication
 
 ---
 
