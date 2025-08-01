@@ -37,6 +37,10 @@ class Appointment(models.Model):
         ('completed', 'Completed'),
         ('Denied', 'Denied'),
     ]
+    PAYMENT_STATUS = [
+        ('Unpaid', 'unpaid'),
+        ('Paid', 'paid'),
+    ]
     patient = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="patient")
     doctor = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name="doctor")
     department = models.ForeignKey(Department, on_delete=models.CASCADE)
@@ -44,7 +48,7 @@ class Appointment(models.Model):
     time = models.TimeField()
     problem = models.TextField()
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
-
+    paymentstatus = models.CharField(max_length=10, choices=PAYMENT_STATUS, default='unpaid')
     def __str__(self):
         return f'Appointment By {self.patient} on {self.date}'
 
@@ -72,3 +76,16 @@ class Message(models.Model):
 
     def __str__(self):
         return f'Message from {self.patient} to {self.doctor} '
+    
+
+
+class Payment(models.Model):
+    phone_number = models.CharField(max_length=20)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    receipt_number = models.CharField(max_length=100)
+    transaction_date = models.CharField(max_length=20)
+    result_code = models.IntegerField()
+    checkout_request_id = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.phone_number} - {self.amount} - {self.receipt_number}"

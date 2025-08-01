@@ -39,7 +39,7 @@ class AppointmentSerializer(serializers.ModelSerializer):
     # Inner class to specify metadata for the serializer
     class Meta:
         model = Appointment  # The model this serializer is for
-        fields = ['doctor', 'department', 'date', 'time', 'problem', 'patient', 'status']  # Fields to include in serialization
+        fields = ['doctor', 'department', 'date', 'time', 'problem', 'patient', 'status','paymentstatus']  # Fields to include in serialization
         read_only_fields = ['patient']  # Prevent the 'patient' field from being required in POST requests
 
 

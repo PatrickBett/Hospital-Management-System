@@ -1,4 +1,4 @@
-from .views import RoomTypeView,RoomView,DepartmentView, UpdateAppointmentStatusView, AppointmentsView, AppointmentsDoctorView, MessageView
+from .views import RoomTypeView,RoomView,DepartmentView, UpdateAppointmentStatusView, AppointmentsView, AppointmentsDoctorView, MessageView, mpesa_stk_push, mpesa_callback
 from django.urls import path
 
 urlpatterns = [
@@ -9,4 +9,6 @@ urlpatterns = [
     path('appointments/doctor/', AppointmentsDoctorView.as_view(),name="doctorsappointments"),
     path('appointments/<int:pk>/update-status/', UpdateAppointmentStatusView.as_view(), name='update-appointment-status'),
     path('messages/', MessageView.as_view(),name="messages"),
+    path('stk-push/', mpesa_stk_push,name="stk-push"),
+    path('mpesa_callback/', mpesa_callback,name="mpesa_callback"),
 ]

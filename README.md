@@ -61,6 +61,10 @@ cd hospital-management-system
 ![alt text](image-5.png)
 ![alt text](image-6.png)
 
+# Mpesa Payment
+
+![alt text](image-7.png)
+
 ## Backend
 
 - python -m venv env

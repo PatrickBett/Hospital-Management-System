@@ -4,6 +4,7 @@ import AppointmentModal from "./AppointmentModal";
 import NewDoctorModal from "./NewDoctorModal";
 import { X, Send } from "lucide-react";
 import Inbox from "./Inbox";
+import Mpesa from "./Mpesa";
 import NextAppointmentNotice from "./NextAppointmentNotice";
 import {
   Container,
@@ -116,7 +117,7 @@ function Dashboard() {
     const fetchAppointments = async () => {
       try {
         const res = await api.get("/api/appointments/");
-        // console.log("Appointments", res.data);
+        console.log("Appointments", res.data);
         dispatch(setappointments(res.data));
       } catch (error) {
         console.log("Failed to fetch appointments: ", error);
@@ -433,11 +434,21 @@ function Dashboard() {
                                   {app.status}
                                 </Badge>
                               </td>
-                              <td>
-                                <Button size="sm" variant="outline-primary">
-                                  Details
-                                </Button>
-                              </td>
+                              {app.status === "confirmed" ? (
+                                app.paymentstatus === "Paid" ? (
+                                  <td>
+                                    <Button size="sm" variant="outline-primary">
+                                      Join
+                                    </Button>
+                                  </td>
+                                ) : (
+                                  <td>
+                                    <Mpesa />
+                                  </td>
+                                )
+                              ) : (
+                                <td></td> // For pending or completed status
+                              )}
                             </tr>
                           ))
                       ) : (
