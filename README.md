@@ -1,6 +1,6 @@
 # Hospital-Management-System
 
-This is a full-stack **Hospital Management System** built using **React**, **Redux**, **Django**, **JWT authentication**, and **Bootstrap**. It provides role-based dashboards for **Admins**, **Doctors**, and **Patients**, with features like appointment booking, user authentication, and role-specific access.
+This **Hospital Management System** is a comprehensive **full-stack web application developed using React, Redux, Django, JWT authentication, OAuth, and Bootstrap**. It provides tailored dashboards for different user roles—**Admins**, **Doctors**, and **Patients**—ensuring secure and role-specific access to features such as appointment booking and user management. The system also integrates **MPESA payment processing**, allowing patients to conveniently pay for their appointments. Designed to streamline hospital operations, this application offers an efficient, user-friendly platform for managing healthcare services end-to-end.
 
 ---
 
