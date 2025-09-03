@@ -55,7 +55,7 @@ function Mpesa() {
               <label className="me-5 m-1">Phone:</label>
               <input
                 type="number"
-                placeholder="Enter Mpesa Number"
+                placeholder="Enter Mpesa Number +254791474737"
                 className="form-control no-outline mb-5"
                 value={mpesaNumber}
                 onChange={(e) => setMpesaNumber(e.target.value)}
