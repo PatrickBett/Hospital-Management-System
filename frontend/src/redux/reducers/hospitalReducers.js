@@ -1,4 +1,4 @@
-import { ActionTypes } from "../constants/action-types";
+import { ActionTypes } from "../constants/action-Types";
 //  the reducer takes the initialstate and the action
 
 const initialstate = {
