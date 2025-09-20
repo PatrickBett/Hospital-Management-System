@@ -3,7 +3,7 @@ import api from "../api";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setappointments } from "../redux/actions/hospitalActions";
-
+import { toast } from "react-toastify";
 // AppointmentModal component for booking a doctor's appointment
 const AppointmentModal = ({ show, handleClose }) => {
   // Form state for storing user input
@@ -68,11 +68,11 @@ const AppointmentModal = ({ show, handleClose }) => {
       const res = await api.post("api/appointments/", formData);
       const newAppointment = res.data;
       dispatch(setappointments([...appointments, newAppointment]));
-      alert("Appointment booked!"); // Notify user
+      toast.success("Appointment Booking Sucessfull!"); // Notify user
       handleClose(); // Close modal
     } catch (err) {
       console.error(err); // Log error
-      alert("Error booking appointment"); // Notify error
+      toast.error("Error booking appointment"); // Notify error
     }
   };
 
