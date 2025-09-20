@@ -68,7 +68,7 @@ const AppointmentModal = ({ show, handleClose }) => {
       const res = await api.post("api/appointments/", formData);
       const newAppointment = res.data;
       dispatch(setappointments([...appointments, newAppointment]));
-      toast.success("Appointment Booking Sucessfull!"); // Notify user
+      toast.success("Appointment Booking Sucessfull"); // Notify user
       handleClose(); // Close modal
     } catch (err) {
       console.error(err); // Log error
