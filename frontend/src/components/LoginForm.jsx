@@ -5,6 +5,7 @@ import api from "../api";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
+import { toast } from "react-toastify";
 const LoginForm = () => {
   const [userType, setUserType] = useState("patient");
   const [username, setUsername] = useState("");
@@ -25,10 +26,12 @@ const LoginForm = () => {
       localStorage.setItem("access_token", res.data.access_token);
       localStorage.setItem("refresh_token", res.data.refresh_token);
       localStorage.setItem("role", res.data.role);
+      toast.success("SignIn Successfull");
       navigate("/dashboard");
       console.log(res.data);
     } catch (error) {
       console.log(error);
+      toast.error("SignIn UnSuccessfull!!!");
       alert(error);
     }
     console.log(jwtDecode(credentials));
@@ -57,10 +60,12 @@ const LoginForm = () => {
         localStorage.setItem("refresh_token", refresh);
         localStorage.setItem("role", role);
         localStorage.setItem("username", username);
+        toast.success("SignIn Successfull");
 
         navigate("/dashboard");
       } catch (error) {
         console.log(error);
+        toast.success("SignIn UnSuccessfull!!!");
       }
 
       // console.log("Login attempt:", {

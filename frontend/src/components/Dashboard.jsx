@@ -5,7 +5,9 @@ import NewDoctorModal from "./NewDoctorModal";
 import { X, Send } from "lucide-react";
 import Inbox from "./Inbox";
 import Mpesa from "./Mpesa";
+import { toast } from "react-toastify";
 import NextAppointmentNotice from "./NextAppointmentNotice";
+import { useNavigate } from "react-router-dom";
 import {
   Container,
   Row,
@@ -35,7 +37,7 @@ function Dashboard() {
   const username = localStorage.getItem("username");
   const [showModal, setShowModal] = useState(false);
   const [showInbox, setShowInbox] = useState(false);
-
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const appointments = useSelector((state) => state.hospitalinfo.appointments);
   const doctors = useSelector((state) => state.hospitalinfo.doctors);
@@ -102,7 +104,9 @@ function Dashboard() {
     localStorage.removeItem("refresh");
     localStorage.removeItem("role"); // if you stored role
     localStorage.removeItem("username");
-    window.location.href = "/login"; // or use React Router to navigate
+    toast.success("Logged Out Success");
+
+    navigate("/login");
   };
 
   useEffect(() => {
@@ -118,6 +122,7 @@ function Dashboard() {
       try {
         const res = await api.get("/api/appointments/");
         console.log("Appointments", res.data);
+
         dispatch(setappointments(res.data));
       } catch (error) {
         console.log("Failed to fetch appointments: ", error);

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import api from "../api";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 export default function SignupForm() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -73,6 +74,7 @@ export default function SignupForm() {
 
     if (Object.keys(formErrors).length === 0) {
       // Form is valid, submit data
+
       console.log("Form submitted successfully:", formData);
       //function to submit formdata to bbackend
 
@@ -83,11 +85,12 @@ export default function SignupForm() {
             console.log(response.data);
           })
           .then(() => {
-            alert("Signed Up Successfully");
+            toast.success("Signed Up Successfully");
             navigate("/login");
           });
       } catch (error) {
         console.log(error);
+        toast.error("Signup Unsuccessful");
       }
 
       setSubmitStatus("success");
