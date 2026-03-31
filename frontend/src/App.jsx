@@ -35,7 +35,7 @@ import PatientDashboard from "./components/Patient/PatientDashboard";
 const Placeholder = ({ title }) => (
   <div className="p-4 bg-white rounded shadow-sm m-4">
     <h3 className="fw-bold">{title} Page</h3>
-    <p className="text-muted">This component is under construction.</p>
+    <p className="text-muted">This component is under development.</p>
   </div>
 );
 
