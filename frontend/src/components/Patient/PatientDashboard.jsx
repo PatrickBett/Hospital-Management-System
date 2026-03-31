@@ -39,8 +39,6 @@ function PatientDashboard() {
     setRecipient("");
   };
 
-
-
   const handleSubmit = async () => {
     toast.info("Sending message logic isn't wired up yet!");
     handleClose();
@@ -79,9 +77,16 @@ function PatientDashboard() {
       <div className="bg-primary text-white py-3 mb-4 shadow-sm w-100">
         <div className="d-flex justify-content-between align-items-center px-4">
           <h2 className="mb-0">Patient Dashboard</h2>
-          <Button variant="outline-light">
-            <img src="" alt="Profile" />
-          </Button>
+
+          <img
+            src="https://www.shutterstock.com/image-photo/handsome-happy-african-american-bearded-260nw-2460702995.jpg"
+            alt="Profile"
+            style={{
+              width: "30px",
+              height: "30px",
+              borderRadius: "50%",
+            }}
+          />
         </div>
       </div>
 

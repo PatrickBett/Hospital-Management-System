@@ -4,6 +4,7 @@ import api from "../api";
 export const AdminContext = createContext();
 
 export const AdminProvider = ({ children }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [appointments, setAppointments] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [doctors, setDoctors] = useState([]);
@@ -11,11 +12,15 @@ export const AdminProvider = ({ children }) => {
   const [doctorappointments, setDoctorAppointments] = useState([]);
 
   // Check if token exists
-  const hasToken = () => !!localStorage.getItem("access_token");
+  useEffect(() => {
+    const token = localStorage.getItem("access");
+    if (token) {
+      setIsAuthenticated(true);
+    }
+  }, []);
 
   // Departments
   const fetchDepartments = async () => {
-    if (!hasToken()) return;
     try {
       const res = await api.get("api/departments");
       setDepartments(res.data);
@@ -26,7 +31,6 @@ export const AdminProvider = ({ children }) => {
 
   // Doctors
   const fetchDoctors = async () => {
-    if (!hasToken()) return;
     try {
       const res = await api.get("/api/users/");
       SetAllUsers(res.data);
@@ -38,7 +42,6 @@ export const AdminProvider = ({ children }) => {
 
   // Appointments
   const fetchAppointments = async () => {
-    if (!hasToken()) return;
     try {
       const res = await api.get("api/appointments");
       setAppointments(res.data);
@@ -49,7 +52,6 @@ export const AdminProvider = ({ children }) => {
 
   // Doctor Appointments
   const fetchDoctorAppointments = async () => {
-    if (!hasToken()) return;
     try {
       const res = await api.get("/api/appointments/doctor/");
       setDoctorAppointments([res.data]);
@@ -58,22 +60,21 @@ export const AdminProvider = ({ children }) => {
     }
   };
 
-  // Centralized function to load everything
-  const refreshData = () => {
-    fetchDepartments();
-    fetchDoctors();
-    fetchAppointments();
-    fetchDoctorAppointments();
-  };
-
   // Run on mount (catches page refreshes)
   useEffect(() => {
-    refreshData();
-  }, []);
+    if (isAuthenticated) {
+      fetchDepartments();
+      fetchDoctorAppointments();
+      fetchDoctors();
+      fetchAppointments();
+    }
+  }, [isAuthenticated]);
 
   return (
     <AdminContext.Provider
       value={{
+        isAuthenticated,
+        setIsAuthenticated,
         appointments,
         setAppointments,
         departments,
@@ -84,7 +85,7 @@ export const AdminProvider = ({ children }) => {
         SetAllUsers,
         doctorappointments,
         setDoctorAppointments,
-        refreshData, // Exposing this to the app!
+        // Exposing this to the app!
       }}
     >
       {children}
