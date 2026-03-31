@@ -62,7 +62,14 @@ const LoginForm = () => {
         localStorage.setItem("username", username);
         toast.success("SignIn Successfull");
 
-        navigate("/dashboard");
+        // navigate("/dashboard");
+        if (role === "admin") {
+          navigate("/admin/dashboard");
+        } else if (role === "doctor") {
+          navigate("/doctor/dashboard");
+        } else if (role === "patient") {
+          navigate("/patient/dashboard");
+        }
       } catch (error) {
         console.log(error);
         toast.success("SignIn UnSuccessfull!!!");
@@ -100,8 +107,6 @@ const LoginForm = () => {
       });
       navigate("/login");
       localStorage.setItem("access_token", response.data.access);
-    } else {
-      console.log("Access hasn't expired");
     }
   };
   checkAccessToken();

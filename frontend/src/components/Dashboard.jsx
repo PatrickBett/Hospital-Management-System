@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import AppointmentModal from "./AppointmentModal";
 import NewDoctorModal from "./NewDoctorModal";
@@ -18,17 +18,22 @@ import {
   Table,
   Badge,
 } from "react-bootstrap";
-import {
-  setappointments,
-  setdoctors,
-  setmessages,
-} from "../redux/actions/hospitalActions";
-import { setdoctorappointments } from "../redux/actions/hospitalActions";
-import { useDispatch, useSelector } from "react-redux";
 
+
+
+import { AdminContext } from "../contexts/AdminContext";
 import api from "../api";
 
 function Dashboard() {
+  const {
+    departments,
+    appointments,
+    doctors,
+    allUsers,
+    doctorappointments,
+    setDoctorAppointments,
+  } = useContext(AdminContext);
+
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [recipient, setRecipient] = useState("");
@@ -38,64 +43,41 @@ function Dashboard() {
   const [showModal, setShowModal] = useState(false);
   const [showInbox, setShowInbox] = useState(false);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const appointments = useSelector((state) => state.hospitalinfo.appointments);
-  const doctors = useSelector((state) => state.hospitalinfo.doctors);
-  const messages = useSelector((state) => state.hospitalinfo.messages);
+
+
   // console.log("All doctors", doctors);
-  //fetched all users
-  const allusers = useSelector((state) => state.hospitalinfo.doctors);
-  // console.log("This allusers", allusers);
-  const doctorappointments = useSelector(
-    (state) => state.hospitalinfo.doctorappointments
-  );
-  // function to post message to a doctor
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const data = {
-      message: message,
-      doctor: recipient,
-    };
 
-    // Here you typically send the message to your backend
-    try {
-      const res = await api.post("/api/messages/", data);
-      console.log("Submiited", data);
-      console.log("Submiited", res);
-      fetchMessages();
-    } catch (error) {
-      console.log(error);
-    }
+  // // function to post message to a doctor
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   const data = {
+  //     message: message,
+  //     doctor: recipient,
+  //   };
 
-    // Reset form and close modal
-    setMessage("");
-    setRecipient("");
-    setIsOpen(false);
+  //   // Here you typically send the message to your backend
+  //   try {
+  //     const res = await api.post("/api/messages/", data);
+  //     console.log("Submiited", data);
+  //     console.log("Submiited", res);
+  //     fetchMessages();
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
 
-    // Show success feedback
-    alert("Message sent successfully!");
-  };
+  //   // Reset form and close modal
+  //   setMessage("");
+  //   setRecipient("");
+  //   setIsOpen(false);
+
+  //   // Show success feedback
+  //   alert("Message sent successfully!");
+  // };
   const handleClose = () => {
     setIsOpen(false);
     setMessage("");
     setRecipient("");
   };
-
-  //fetching messages
-  const fetchMessages = async () => {
-    try {
-      const fetchedmessages = await api.get("/api/messages");
-
-      dispatch(setmessages(fetchedmessages.data));
-      console.log("Fetched Messages", fetchedmessages.data);
-    } catch (error) {
-      console.log("Error fetching data", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchMessages();
-  }, []);
 
   const userId = 1;
 
@@ -116,36 +98,6 @@ function Dashboard() {
     setLoading(false);
   }, []);
 
-  // fetching apppointments
-  useEffect(() => {
-    const fetchAppointments = async () => {
-      try {
-        const res = await api.get("/api/appointments/");
-        console.log("Appointments", res.data);
-
-        dispatch(setappointments(res.data));
-      } catch (error) {
-        console.log("Failed to fetch appointments: ", error);
-      }
-    };
-    fetchAppointments();
-  }, []);
-
-  //fetching doctor appointments
-  useEffect(() => {
-    const fetchDoctorAppointments = async () => {
-      try {
-        const res = await api.get("/api/appointments/doctor/");
-        const newdoctorappointments = res.data;
-        // console.log("DOCTOR APPOINTMENTS", res.data);
-        dispatch(setdoctorappointments([newdoctorappointments]));
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchDoctorAppointments();
-  }, [dispatch]);
-
   // Updating Appointment Approval
   const handleStatusUpdate = async (id, status) => {
     try {
@@ -158,26 +110,12 @@ function Dashboard() {
         group.map((appointment) =>
           appointment.id === id
             ? { ...appointment, status: status }
-            : appointment
-        )
+            : appointment,
+        ),
       );
-      dispatch(setdoctorappointments(updatedAppointments));
+      setDoctorAppointments(updatedAppointments);
     } catch (error) {
       console.error("Status update failed", error);
-    }
-  };
-  //fetching doctors(allusers)
-
-  useEffect(() => {
-    fetchDoctors();
-  }, []);
-  const fetchDoctors = async () => {
-    try {
-      const users = await api.get("/api/users/");
-
-      dispatch(setdoctors(users.data));
-    } catch (error) {
-      console.log(error);
     }
   };
 
@@ -432,8 +370,8 @@ function Dashboard() {
                                     app.status === "confirmed"
                                       ? "success"
                                       : app.status === "Denied"
-                                      ? "danger"
-                                      : "warning"
+                                        ? "danger"
+                                        : "warning"
                                   }
                                 >
                                   {app.status}
@@ -511,7 +449,7 @@ function Dashboard() {
                 <Card.Body className="text-center">
                   <h6 className="text-muted">Total Patients</h6>
                   <h2 className="display-4 fw-bold text-primary">
-                    {allusers.filter((user) => user.role === "patient").length}
+                    {allUsers.filter((user) => user.role === "patient").length}
                   </h2>
                   <Button variant="outline-primary" size="sm">
                     Patient List
@@ -535,7 +473,7 @@ function Dashboard() {
                 <Card.Body className="text-center">
                   <h6 className="text-muted">Notifications</h6>
                   <h2 className="display-4 fw-bold text-primary">
-                    {messages.length}
+                    {/* {messages?.length || 0} */}
                   </h2>
                   <Button
                     variant="outline-primary"
@@ -620,8 +558,8 @@ function Dashboard() {
                                     docappointment.status === "confirmed"
                                       ? "success"
                                       : docappointment.status === "Denied"
-                                      ? "danger"
-                                      : "warning"
+                                        ? "danger"
+                                        : "warning"
                                   }
                                 >
                                   {docappointment.status}
@@ -637,7 +575,7 @@ function Dashboard() {
                                       onClick={() =>
                                         handleStatusUpdate(
                                           docappointment.id,
-                                          "confirmed"
+                                          "confirmed",
                                         )
                                       }
                                     >
@@ -649,7 +587,7 @@ function Dashboard() {
                                       onClick={() =>
                                         handleStatusUpdate(
                                           docappointment.id,
-                                          "Denied"
+                                          "Denied",
                                         )
                                       }
                                     >
@@ -749,7 +687,7 @@ function Dashboard() {
                 <Card.Body className="text-center">
                   <h6 className="text-muted">Total Patients</h6>
                   <h2 className="display-4 fw-bold text-primary">
-                    {allusers.filter((user) => user.role === "patient").length}
+                    {allUsers.filter((user) => user.role === "patient").length}
                   </h2>
                 </Card.Body>
               </Card>
@@ -759,7 +697,7 @@ function Dashboard() {
                 <Card.Body className="text-center">
                   <h6 className="text-muted">Total Doctors</h6>
                   <h2 className="display-4 fw-bold text-success">
-                    {allusers.filter((user) => user.role === "doctor").length}
+                    {doctors.length}
                   </h2>
                 </Card.Body>
               </Card>
@@ -855,9 +793,9 @@ function Dashboard() {
                       </tr>
                     </thead>
                     <tbody>
-                      {allusers.filter((user) => user.role === "doctor")
+                      {allUsers.filter((user) => user.role === "doctor")
                         .length > 0 ? (
-                        allusers
+                        allUsers
                           .filter((user) => user.role === "doctor")
                           .map((doctor, index) => (
                             <tr key={index}>
@@ -949,8 +887,8 @@ function Dashboard() {
                                   app.status === "confirmed"
                                     ? "warning"
                                     : app.status === "pending"
-                                    ? "primary"
-                                    : "success"
+                                      ? "primary"
+                                      : "success"
                                 }
                               >
                                 {app.status}

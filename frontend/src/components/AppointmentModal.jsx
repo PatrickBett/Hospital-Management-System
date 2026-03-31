@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import api from "../api";
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { setappointments } from "../redux/actions/hospitalActions";
+
 import { toast } from "react-toastify";
+import { AdminContext } from "../contexts/AdminContext";
 // AppointmentModal component for booking a doctor's appointment
 const AppointmentModal = ({ show, handleClose }) => {
   // Form state for storing user input
@@ -15,42 +15,8 @@ const AppointmentModal = ({ show, handleClose }) => {
     problem: "",
   });
 
-  const dispatch = useDispatch();
-
-  // Fetch departments and store in Redux
-  const departments = useSelector((state) => state.hospitalinfo.departments);
-  const appointments = useSelector((state) => state.hospitalinfo.appointments);
-
-  // Fetch doctors and store in Redux
-  const doctors = useSelector((state) => state.hospitalinfo.doctors);
-  // console.log(doctors); // Debug: log doctor data to console
-
-  // Function to fetch departments from API
-  const fetchDepartments = async () => {
-    const res = await api.get("api/departments");
-    // console.log("DEPARTMENTS", res.data); // Debug: log fetched departments
-    dispatch({ type: "SET_DEPARTMENTS", payload: res.data }); // Dispatch to Redux
-  };
-
-  // useEffect to load departments on component mount
-  useEffect(() => {
-    fetchDepartments();
-  }, []);
-
-  // Function to fetch all users and filter out doctors
-  const fetchDoctors = async () => {
-    const res = await api.get("api/users");
-    const doctors = res.data.filter((user) => user.role === "doctor"); // Filter by role
-    dispatch({
-      type: "SET_DOCTORS",
-      payload: doctors,
-    });
-  };
-
-  // useEffect to load doctors on component mount
-  useEffect(() => {
-    fetchDoctors();
-  }, []);
+  const { doctors, departments, appointments, setAppointments } =
+    useContext(AdminContext);
 
   // Handles change in form inputs
   const handleChange = (e) => {
@@ -67,7 +33,7 @@ const AppointmentModal = ({ show, handleClose }) => {
     try {
       const res = await api.post("api/appointments/", formData);
       const newAppointment = res.data;
-      dispatch(setappointments([...appointments, newAppointment]));
+      setAppointments([...appointments, newAppointment]); // Update appointments in context
       toast.success("Appointment Booking Sucessfull"); // Notify user
       handleClose(); // Close modal
     } catch (err) {

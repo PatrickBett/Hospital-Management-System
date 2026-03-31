@@ -1,0 +1,21 @@
+/* Handles margins for sidebar perfectly on all screens */
+@media (min-width: 768px) {
+  .dashboard-content {
+    margin-left: 250px !important;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .dashboard-content {
+    margin-left: 0px !important;
+  }
+}
+
+.hover-bg-light-gray:hover {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+  color: #000 !important;
+}
+
+.transition-all {
+  transition: all 0.2s ease-in-out;
+}
