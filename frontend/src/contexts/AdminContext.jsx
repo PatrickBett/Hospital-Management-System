@@ -13,7 +13,7 @@ export const AdminProvider = ({ children }) => {
 
   // Check if token exists
   useEffect(() => {
-    const token = localStorage.getItem("access");
+    const token = localStorage.getItem("access_token");
     if (token) {
       setIsAuthenticated(true);
     }
