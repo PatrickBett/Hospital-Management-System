@@ -32,6 +32,7 @@ import Staffs from "./components/Admin/Staffs";
 // Doctor Imports
 import DoctorLayout from "./components/Doctor/DoctorLayout";
 import DoctorDashboard from "./components/Doctor/DoctorDashboard";
+import DoctorAppointments from "./components/Doctor/DoctorAppointments";
 
 // Patient Imports
 import PatientLayout from "./components/Patient/PatientLayout";
@@ -112,10 +113,7 @@ function App() {
               element={<Navigate to="/doctor/dashboard" replace />}
             />
             <Route path="dashboard" element={<DoctorDashboard />} />
-            <Route
-              path="appointments"
-              element={<Placeholder title="Doctor Appointments" />}
-            />
+            <Route path="appointments" element={<DoctorAppointments />} />
             <Route
               path="patients"
               element={<Placeholder title="My Patients" />}

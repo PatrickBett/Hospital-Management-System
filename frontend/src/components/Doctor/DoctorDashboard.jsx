@@ -18,6 +18,12 @@ import api from "../../api";
 function DoctorDashboard() {
   const { allUsers, doctorappointments, setDoctorAppointments } =
     useContext(AdminContext);
+    console.log("docappointments", doctorappointments);
+
+  const pendingappointments = (doctorappointments || []).flat().filter(
+    (apt) => apt.status === "pending",
+  );
+  console.log("pendingappointments", pendingappointments);
 
   const [role, setRole] = useState("");
   const [loading, setLoading] = useState(true);
@@ -189,67 +195,50 @@ function DoctorDashboard() {
                     </tr>
                   </thead>
                   <tbody>
-                    {doctorappointments.flat().length > 0 ? (
-                      doctorappointments.flat().map((docappointment, index) => (
-                        <tr key={index}>
-                          <td>{docappointment.date}</td>
-                          <td>{docappointment.time}</td>
-                          <td>{docappointment.patient.first_name}</td>
-                          <td>{docappointment.problem}</td>
-                          <td>
-                            <Badge
-                              bg={
-                                docappointment.status === "confirmed"
-                                  ? "success"
-                                  : docappointment.status === "Denied"
-                                    ? "danger"
-                                    : "warning"
+                    {pendingappointments.flat().length > 0 ? (
+                      pendingappointments
+                        .flat()
+                        .map((docappointment, index) => (
+                          <tr key={index}>
+                            <td>{docappointment.date}</td>
+                            <td>{docappointment.time}</td>
+                            <td>{docappointment.patient.first_name}</td>
+                            <td>{docappointment.problem}</td>
+                            <td>{docappointment.status}</td>
+
+                            <td>
+                              {
+                                <>
+                                  <Button
+                                    size="sm"
+                                    variant="success"
+                                    className="me-2"
+                                    onClick={() =>
+                                      handleStatusUpdate(
+                                        docappointment.id,
+                                        "confirmed",
+                                      )
+                                    }
+                                  >
+                                    Approve
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="danger"
+                                    onClick={() =>
+                                      handleStatusUpdate(
+                                        docappointment.id,
+                                        "Denied",
+                                      )
+                                    }
+                                  >
+                                    Deny
+                                  </Button>
+                                </>
                               }
-                            >
-                              {docappointment.status}
-                            </Badge>
-                          </td>
-                          <td>
-                            {docappointment.status === "pending" ? (
-                              <>
-                                <Button
-                                  size="sm"
-                                  variant="success"
-                                  className="me-2"
-                                  onClick={() =>
-                                    handleStatusUpdate(
-                                      docappointment.id,
-                                      "confirmed",
-                                    )
-                                  }
-                                >
-                                  Approve
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  variant="danger"
-                                  onClick={() =>
-                                    handleStatusUpdate(
-                                      docappointment.id,
-                                      "Denied",
-                                    )
-                                  }
-                                >
-                                  Deny
-                                </Button>
-                              </>
-                            ) : docappointment.status === "confirmed" ? (
-                              <Button size="sm" variant="primary">
-                                Start Session
-                              </Button>
-                            ) : (
-                              <Button size="sm" variant="danger">
-                                Delete
-                              </Button>
-                            )}
-                          </td>
-                        </tr>
-                      ))
+                            </td>
+                          </tr>
+                        ))
                     ) : (
                       <tr>
                         <td colSpan="6" className="text-center text-muted py-3">

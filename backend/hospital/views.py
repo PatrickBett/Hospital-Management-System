@@ -6,15 +6,23 @@ from django.http import JsonResponse
 import json
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
-from .serializers import RoomSerializer,RoomtypeSerializer,DepartmentSerializer,AppointmentSerializer, MessageSerializer
-from rest_framework.generics import ListAPIView
+from .serializers import RoomSerializer,RoomtypeSerializer,DepartmentSerializer,AppointmentSerializer, MessageSerializer, MedicineSerializer
+from rest_framework.generics import ListAPIView,RetrieveUpdateDestroyAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import Room, Roomtype, Department, Appointment, Message, CustomUser
+from .models import Room, Roomtype, Department, Appointment, Message, CustomUser, Medicine
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.conf import settings
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 # Create your views here.
+
+# Medicine Views
+class ListInventoryView(ListAPIView):
+    queryset = Medicine.objects.all()
+    serializer_class = MedicineSerializer
+    permission_classes = [IsAuthenticated]
+
+
 # View to list all Room types
 class RoomTypeView(APIView):
     permission_classes = [IsAuthenticated] #Only authenticated users
@@ -35,12 +43,21 @@ class RoomView(APIView):
 
 # View to list all Departments
 class DepartmentView(APIView):
-    # permission_classes = [IsAuthenticated] #Only authenticated users
+    permission_classes = [IsAuthenticated] #Only authenticated users
 
     def get(self,request):
         departments = Department.objects.all()
         serializer = DepartmentSerializer(departments, many=True)
         return Response(serializer.data)
+class DeleteDepartmentView(RetrieveUpdateDestroyAPIView):
+    queryset = Department.objects.all()
+    serializer_class = DepartmentSerializer
+    permission_classes = [IsAuthenticated]
+    def delete(self, request, *args, **kwargs):
+        department = self.get_object()
+        department.delete()
+        return Response({"message": "Department deleted successfully"}, status=204)
+        
     
 # View to list all Apointments
 class AppointmentsView(APIView):

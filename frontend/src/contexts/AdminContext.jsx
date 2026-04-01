@@ -9,6 +9,7 @@ export const AdminProvider = ({ children }) => {
   const [departments, setDepartments] = useState([]);
   const [doctors, setDoctors] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
+  const [medicine, setMedicine] = useState([]);
   const [doctorappointments, setDoctorAppointments] = useState([]);
 
   // Check if token exists
@@ -24,6 +25,7 @@ export const AdminProvider = ({ children }) => {
     try {
       const res = await api.get("api/departments");
       setDepartments(res.data);
+      console.log("Fetched departments:", res.data);
     } catch (error) {
       console.log("error fetching departments", error);
     }
@@ -38,6 +40,16 @@ export const AdminProvider = ({ children }) => {
       setDoctors(res.data.filter((user) => user.role === "doctor"));
     } catch (error) {
       console.log("error fetching doctors", error);
+    }
+  };
+  // Medicine
+  const fetchMedicine = async () => {
+    try {
+      const res = await api.get("/api/inventory/");
+      console.log("Fetched medicine:", res.data);
+      setMedicine(res.data);
+    } catch (error) {
+      console.log("error fetching medicine", error);
     }
   };
 
@@ -68,6 +80,7 @@ export const AdminProvider = ({ children }) => {
       fetchDoctorAppointments();
       fetchDoctors();
       fetchAppointments();
+      fetchMedicine();
     }
   }, [isAuthenticated]);
 
@@ -86,6 +99,8 @@ export const AdminProvider = ({ children }) => {
         setAllUsers,
         doctorappointments,
         setDoctorAppointments,
+        medicine,
+        setMedicine,
         // Exposing this to the app!
       }}
     >

@@ -2,31 +2,10 @@ import React, { useContext } from "react";
 import { AdminContext } from "../../contexts/AdminContext";
 import api from "../../api";
 
-function AdminAppointments() {
-  const { appointments, setAppointments } = useContext(AdminContext);
-  console.log("AdminAppointments render, appointments:", appointments);
+function DoctorAppointments() {
+  const { doctorappointments, setDoctorAppointments } = useContext(AdminContext);
+  console.log("DoctorAppointments render, doctorappointments:", doctorappointments);
 
-
-  // DELETE
-  const handleDelete = async (id) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this appointment?",
-    );
-    if (!confirmDelete) return;
-
-    try {
-      await api.delete(`api/appointments/${id}/`);
-      setAppointments(appointments.filter((apt) => apt.id !== id));
-    } catch (error) {
-      console.error("Delete failed:", error);
-    }
-  };
-
-  // EDIT (placeholder)
-  const handleEdit = (apt) => {
-    console.log("Edit appointment:", apt);
-    // later: open modal or navigate
-  };
 
   return (
     <div className="p-4 bg-white rounded shadow-sm m-2">
@@ -37,32 +16,33 @@ function AdminAppointments() {
       </div>
 
       {/* Empty State */}
-      {(!appointments || appointments.length === 0) && (
+      {(!doctorappointments || doctorappointments.length === 0) && (
         <p className="text-muted">No appointments available.</p>
       )}
 
       {/* Table */}
-      {appointments && appointments.length > 0 && (
+      {doctorappointments && doctorappointments.length > 0 && (
         <div className="table-responsive">
           <table className="table table-bordered align-middle">
             <thead className="table-light">
               <tr>
                 <th>#</th>
-                <th>Dr Name</th>
-                <th>Patient Name</th>
+                <th>Name</th>
+                <th>Date</th>
                 <th>Time</th>
+                <th>Problem</th>
                 <th>Status</th>
-
                 <th style={{ width: "150px" }}>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {appointments.map((apt, index) => (
+              {doctorappointments.flat().map((apt, index) => (
                 <tr key={apt.id || index}>
                   <td>{index + 1}</td>
-                  <td>Dr. {apt.doctor.first_name}</td>
                   <td>{apt.patient.first_name}</td>
+                  <td>{apt.date}</td>
                   <td>{apt.time}</td>
+                  <td>{apt.problem}</td>
                   <td>{apt.status}</td>
                   <td>
                     <button
@@ -88,4 +68,4 @@ function AdminAppointments() {
   );
 }
 
-export default AdminAppointments;
+export default DoctorAppointments;
