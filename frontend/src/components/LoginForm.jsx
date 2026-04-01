@@ -1,41 +1,42 @@
 import React, { useState } from "react";
-import { LogIn, User, Lock, Users, Shield } from "react-feather";
+import { LogIn, User, Lock } from "react-feather";
 import "bootstrap/dist/css/bootstrap.min.css";
 import api from "../api";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import { toast } from "react-toastify";
+
 const LoginForm = () => {
-  const [userType, setUserType] = useState("patient");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  //function to set up google signin
+
+  // Function to set up Google sign-in
   const responseGoogle = async (response) => {
     const credentials = response.credential;
 
     try {
       const res = await api.post("/api/google-login", {
         token: credentials,
-        userType: userType,
       });
       localStorage.setItem("access_token", res.data.access_token);
       localStorage.setItem("refresh_token", res.data.refresh_token);
       localStorage.setItem("role", res.data.role);
-      toast.success("SignIn Successfull");
+      toast.success("SignIn Successful");
       navigate("/dashboard");
       console.log(res.data);
     } catch (error) {
       console.log(error);
-      toast.error("SignIn UnSuccessfull!!!");
+      toast.error("SignIn Unsuccessful!!!");
       alert(error);
     }
     console.log(jwtDecode(credentials));
   };
+
   const responseError = (error) => {
     console.log(error);
   };
@@ -45,24 +46,21 @@ const LoginForm = () => {
     setError("");
     setIsLoading(true);
 
-    // Simulating authentication process
     setTimeout(async () => {
-      // In a real application, you would handle authentication here
-      // and redirect based on user type and auth statuss
       try {
         const response = await api.post("api/token/", {
           username,
           password,
         });
         const { access, refresh, role } = response.data;
-        // console.log(response.data);
+
         localStorage.setItem("access_token", access);
         localStorage.setItem("refresh_token", refresh);
         localStorage.setItem("role", role);
         localStorage.setItem("username", username);
-        toast.success("SignIn Successfull");
+        toast.success("SignIn Successful");
 
-        // navigate("/dashboard");
+        // Redirect based dynamically on the role returned from the backend
         if (role === "admin") {
           navigate("/admin/dashboard");
         } else if (role === "doctor") {
@@ -72,18 +70,11 @@ const LoginForm = () => {
         }
       } catch (error) {
         console.log(error);
-        toast.success("SignIn UnSuccessfull!!!");
+        toast.error("SignIn Unsuccessful!!!");
       }
 
-      // console.log("Login attempt:", {
-      //   userType,
-      //   username,
-      //   password,
-      //   rememberMe,
-      // });
       setIsLoading(false);
 
-      // For demo purposes, showing error for empty fields
       if (!username || !password) {
         setError("Please enter both username and password");
       }
@@ -122,53 +113,14 @@ const LoginForm = () => {
                   <h3 className="fw-bold text-primary mb-1">MediCare Pro</h3>
                   <p className="text-muted">Sign in to access your account</p>
                 </div>
-                {/* User Type Selector */}
-                <div className="user-type-selector mb-4">
-                  <div className="d-flex justify-content-between border rounded p-1 bg-light">
-                    <button
-                      type="button"
-                      className={`btn flex-grow-1 py-2 ${
-                        userType === "patient"
-                          ? "btn-primary"
-                          : "btn-light text-muted"
-                      }`}
-                      onClick={() => setUserType("patient")}
-                    >
-                      <User size={18} className="me-2" />
-                      Patient
-                    </button>
-                    <button
-                      type="button"
-                      className={`btn flex-grow-1 py-2 ${
-                        userType === "doctor"
-                          ? "btn-primary"
-                          : "btn-light text-muted"
-                      }`}
-                      onClick={() => setUserType("doctor")}
-                    >
-                      <Users size={18} className="me-2" />
-                      Doctor
-                    </button>
-                    <button
-                      type="button"
-                      className={`btn flex-grow-1 py-2 ${
-                        userType === "admin"
-                          ? "btn-primary"
-                          : "btn-light text-muted"
-                      }`}
-                      onClick={() => setUserType("admin")}
-                    >
-                      <Shield size={18} className="me-2" />
-                      Admin
-                    </button>
-                  </div>
-                </div>
+
                 {/* Error Message */}
                 {error && (
                   <div className="alert alert-danger py-2" role="alert">
                     {error}
                   </div>
                 )}
+
                 {/* Login Form */}
                 <form onSubmit={handleSubmit} className="mb-3">
                   <div className="mb-3">
@@ -180,12 +132,10 @@ const LoginForm = () => {
                         <User size={18} className="text-muted" />
                       </span>
                       <input
-                        type="username"
+                        type="text"
                         className="form-control"
                         id="username"
-                        placeholder={`Enter your username${
-                          userType === "admin" ? " (admin@medicpro.com)" : ""
-                        }`}
+                        placeholder="Enter your username"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         required
@@ -261,52 +211,30 @@ const LoginForm = () => {
                     )}
                   </button>
 
-                  {userType === "patient" && (
-                    <div className="text-center">
-                      <p className="text-muted mb-0">
-                        Don't have an account?{" "}
-                        <a href="signup" className="text-primary">
-                          Register Now
-                        </a>
-                      </p>
-                    </div>
-                  )}
+                  <div className="text-center">
+                    <p className="text-muted mb-0">
+                      Don't have an account?{" "}
+                      <a href="signup" className="text-primary">
+                        Register Now
+                      </a>
+                    </p>
+                  </div>
                 </form>
+
                 <div className="mb-3">
                   <h5 className="text-center">OR</h5>
                 </div>
 
-                <GoogleOAuthProvider clientId="19682570152-dvs7v9kbjvqf7i6t8mjdipo2i59j6knq.apps.googleusercontent.com">
-                  <GoogleLogin
-                    onSuccess={responseGoogle}
-                    onError={responseError}
-                    cookiePolicy={"single_host_origin"}
-                    scope="https://www.googleapis.com/auth/calendar.events"
-                  />
-                </GoogleOAuthProvider>
-                {/* Additional Information */}
-                {userType === "doctor" && (
-                  <div className="mt-4 pt-3 border-top">
-                    <div className="alert alert-info py-2" role="alert">
-                      <small>
-                        <strong>Note for Doctors:</strong> If you're having
-                        trouble accessing your account, please contact your
-                        hospital administrator.
-                      </small>
-                    </div>
-                  </div>
-                )}
-                {userType === "admin" && (
-                  <div className="mt-4 pt-3 border-top">
-                    <div className="alert alert-info py-2" role="alert">
-                      <small>
-                        <strong>Admin Access:</strong> This portal is restricted
-                        to authorized hospital administrators only. For security
-                        reasons, failed login attempts are logged.
-                      </small>
-                    </div>
-                  </div>
-                )}
+                <div className="d-flex justify-content-center">
+                  <GoogleOAuthProvider clientId="19682570152-dvs7v9kbjvqf7i6t8mjdipo2i59j6knq.apps.googleusercontent.com">
+                    <GoogleLogin
+                      onSuccess={responseGoogle}
+                      onError={responseError}
+                      cookiePolicy={"single_host_origin"}
+                      scope="https://www.googleapis.com/auth/calendar.events"
+                    />
+                  </GoogleOAuthProvider>
+                </div>
               </div>
             </div>
 

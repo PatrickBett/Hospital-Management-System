@@ -8,6 +8,9 @@ import { UserPlus, Users, CalendarPlus, FileText } from "lucide-react";
 
 function AdminDashboard() {
   const { appointments, doctors, allUsers } = useContext(AdminContext);
+  console.log("Admin Dashboard - Appointments:", appointments);
+  console.log("Admin Dashboard - Doctors:", doctors);
+  console.log("Admin Dashboard - All Users:", allUsers);
 
   return (
     <>
@@ -105,7 +108,7 @@ function AdminDashboard() {
         <Col>
           <Card className="shadow-sm border-0">
             <Card.Header className="bg-white d-flex justify-content-between align-items-center py-3">
-              <h5 className="mb-0 fw-bold">Doctors Directory</h5>
+              <h5 className="mb-0 fw-bold">Expiring Soon</h5>
               <Button variant="link" size="sm" className="text-decoration-none">
                 View All
               </Button>
@@ -114,11 +117,11 @@ function AdminDashboard() {
               <Table hover responsive align="middle" className="mb-0">
                 <thead className="table-light">
                   <tr>
-                    <th>Doctor Name</th>
+                    <th>Medicine Name</th>
                     <th>Specialty</th>
-                    <th>Dr Number</th>
-                    <th>Experience</th>
-                    <th>Available</th>
+                    <th>Date of Manufacture</th>
+                    <th>Date Of Expiry</th>
+                    <th>Quantity</th>
                     <th>Actions</th>
                   </tr>
                 </thead>

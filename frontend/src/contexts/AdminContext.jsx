@@ -8,7 +8,7 @@ export const AdminProvider = ({ children }) => {
   const [appointments, setAppointments] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [doctors, setDoctors] = useState([]);
-  const [allUsers, SetAllUsers] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
   const [doctorappointments, setDoctorAppointments] = useState([]);
 
   // Check if token exists
@@ -33,7 +33,8 @@ export const AdminProvider = ({ children }) => {
   const fetchDoctors = async () => {
     try {
       const res = await api.get("/api/users/");
-      SetAllUsers(res.data);
+      console.log("Fetched users/doctors:", res.data);
+      setAllUsers(res.data);
       setDoctors(res.data.filter((user) => user.role === "doctor"));
     } catch (error) {
       console.log("error fetching doctors", error);
@@ -82,7 +83,7 @@ export const AdminProvider = ({ children }) => {
         doctors,
         setDoctors,
         allUsers,
-        SetAllUsers,
+        setAllUsers,
         doctorappointments,
         setDoctorAppointments,
         // Exposing this to the app!

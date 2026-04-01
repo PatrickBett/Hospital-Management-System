@@ -23,6 +23,11 @@ import ViewMessage from "../ViewMessage";
 // Admin Imports
 import AdminLayout from "./components/Admin/AdminLayout";
 import AdminDashboard from "./components/Admin/AdminDashboard";
+import InventoryPage from "./components/Admin/InventoryPage";
+import AdminAppointments from "./components/Admin/AdminAppointments";
+import Departments from "./components/Admin/Departments";
+import Patients from "./components/Admin/Patients";
+import Staffs from "./components/Admin/Staffs";
 
 // Doctor Imports
 import DoctorLayout from "./components/Doctor/DoctorLayout";
@@ -128,20 +133,11 @@ function App() {
           >
             <Route index element={<Navigate to="/admin/dashboard" replace />} />
             <Route path="dashboard" element={<AdminDashboard />} />
-            <Route path="staffs" element={<Placeholder title="Staffs" />} />
-            <Route path="patients" element={<Placeholder title="Patients" />} />
-            <Route
-              path="appointments"
-              element={<Placeholder title="Appointments" />}
-            />
-            <Route
-              path="inventory"
-              element={<Placeholder title="Inventory" />}
-            />
-            <Route
-              path="departments"
-              element={<Placeholder title="Departments" />}
-            />
+            <Route path="staffs" element={<Staffs />} />
+            <Route path="patients" element={<Patients />} />
+            <Route path="appointments" element={<AdminAppointments />} />
+            <Route path="inventory" element={<InventoryPage />} />
+            <Route path="departments" element={<Departments />} />
           </Route>
         </Routes>
       </BrowserRouter>

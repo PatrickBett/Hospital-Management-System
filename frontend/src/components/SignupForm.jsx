@@ -2,6 +2,7 @@ import { useState } from "react";
 import api from "../api";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+
 export default function SignupForm() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -69,52 +70,43 @@ export default function SignupForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const formErrors = validateForm();
 
     if (Object.keys(formErrors).length === 0) {
       // Form is valid, submit data
-
       console.log("Form submitted successfully:", formData);
-      //function to submit formdata to bbackend
 
       try {
-        await api
-          .post("api/users/", formData)
-          .then((response) => {
-            console.log(response.data);
-          })
-          .then(() => {
-            toast.success("Signed Up Successfully");
-            navigate("/login");
+        const response = await api.post("api/users/", formData);
+        console.log(response.data);
+
+        toast.success("Signed Up Successfully");
+        navigate("/login");
+
+        setSubmitStatus("success");
+        setErrors({});
+
+        // Reset form after successful submission
+        setTimeout(() => {
+          setFormData({
+            first_name: "",
+            last_name: "",
+            username: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+            role: "patient",
+            doctor_number: "",
           });
+          setSubmitStatus("");
+        }, 3000);
       } catch (error) {
         console.log(error);
         toast.error("Signup Unsuccessful");
+        setSubmitStatus("error");
       }
-
-      setSubmitStatus("success");
-      setErrors({});
-
-      // In a real app, you would send this data to your backend
-      // Example: axios.post('/api/signup', formData);
-
-      // Reset form after successful submission
-      setTimeout(() => {
-        setFormData({
-          first_name: "",
-          last_name: "",
-          username: "",
-          email: "",
-          password: "",
-          confirmPassword: "",
-          role: "patient",
-          doctor_number: "",
-        });
-        setSubmitStatus("");
-      }, 3000);
     } else {
-      setErrors("Error why form  got not submitted", formErrors);
+      setErrors(formErrors);
       setSubmitStatus("error");
     }
   };
@@ -244,7 +236,7 @@ export default function SignupForm() {
               </div>
             </div>
 
-            <div className="col-md-6">
+            <div className="mb-3">
               <label htmlFor="username" className="form-label">
                 Username
               </label>
@@ -255,13 +247,13 @@ export default function SignupForm() {
                 <input
                   type="text"
                   className={`form-control ${
-                    errors.last_name ? "is-invalid" : ""
+                    errors.username ? "is-invalid" : ""
                   }`}
                   id="username"
                   name="username"
                   value={formData.username}
                   onChange={handleChange}
-                  placeholder="username"
+                  placeholder="Username"
                 />
                 {errors.username && (
                   <div className="invalid-feedback">{errors.username}</div>
