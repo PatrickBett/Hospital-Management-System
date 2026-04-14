@@ -18,11 +18,11 @@ import api from "../../api";
 function DoctorDashboard() {
   const { allUsers, doctorappointments, setDoctorAppointments } =
     useContext(AdminContext);
-    console.log("docappointments", doctorappointments);
+  console.log("docappointments", doctorappointments);
 
-  const pendingappointments = (doctorappointments || []).flat().filter(
-    (apt) => apt.status === "pending",
-  );
+  const pendingappointments = (doctorappointments || [])
+    .flat()
+    .filter((apt) => apt.status === "pending");
   console.log("pendingappointments", pendingappointments);
 
   const [role, setRole] = useState("");
@@ -30,6 +30,7 @@ function DoctorDashboard() {
   const [showModal, setShowModal] = useState(false);
   const [showInbox, setShowInbox] = useState(false);
   const [messages] = useState([]);
+  const username = localStorage.getItem("username");
 
   useEffect(() => {
     const userRole = localStorage.getItem("role");
@@ -103,6 +104,12 @@ function DoctorDashboard() {
         </Col>
       </Row>
 
+      <Row>
+        <h3 className="ms-4 mb-0 py-3 mb-2 mx-0">
+          Welcome back Dr. {username}!
+        </h3>
+      </Row>
+
       <Container fluid className="px-4">
         {/* Stats Cards */}
         <Row className="mb-4 g-3">
@@ -173,7 +180,21 @@ function DoctorDashboard() {
           <Col>
             <Card className="shadow-sm border-0">
               <Card.Header className="bg-white d-flex justify-content-between align-items-center py-3">
-                <h5 className="mb-0 fw-bold">Today's Schedule</h5>
+                <div className="d-flex align-items-center gap-2">
+                  <h5 className="mb-0 fw-bold">
+                    Appointments Awaiting Confirmation
+                  </h5>
+                  <span
+                    style={{
+                      display: "inline-block",
+                      width: "10px",
+                      height: "10px",
+                      borderRadius: "50%",
+                      backgroundColor: "#ef4444",
+                      animation: "blink 1.2s ease-in-out infinite",
+                    }}
+                  />
+                </div>
                 <Button
                   variant="outline-success"
                   size="sm"
@@ -242,7 +263,7 @@ function DoctorDashboard() {
                     ) : (
                       <tr>
                         <td colSpan="6" className="text-center text-muted py-3">
-                          Currently no appointments available.
+                          Currently no Appointments to be Confirmed.
                         </td>
                       </tr>
                     )}

@@ -2,15 +2,21 @@ import React, { useContext } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Row, Col, Card, Button, Table, Badge } from "react-bootstrap";
 import { AdminContext } from "../../contexts/AdminContext";
-
-// Import Lucide icons to match your sidebar theme
+import { Pencil, Trash } from "lucide-react";
 import { UserPlus, Users, CalendarPlus, FileText } from "lucide-react";
 
 function AdminDashboard() {
-  const { appointments, doctors, allUsers } = useContext(AdminContext);
-  console.log("Admin Dashboard - Appointments:", appointments);
-  console.log("Admin Dashboard - Doctors:", doctors);
-  console.log("Admin Dashboard - All Users:", allUsers);
+  const { appointments, doctors, allUsers, medicine, expiringSoon } =
+    useContext(AdminContext);
+
+  // Derive already expired medicines from medicine list
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const alreadyExpired = (medicine || []).filter((med) => {
+    const expiry = new Date(med.expiry_date);
+    return expiry < today;
+  });
 
   return (
     <>
@@ -103,76 +109,184 @@ function AdminDashboard() {
         </Col>
       </Row>
 
-      {/* Doctors List */}
-      <Row className="mb-4">
-        <Col>
-          <Card className="shadow-sm border-0">
+      {/* Medicine Status Row — Expiring Soon + Already Expired side by side */}
+      <Row className="mb-4 g-3">
+        {/* Expiring Soon */}
+        <Col xl={6}>
+          <Card className="shadow-sm border-0 h-100">
             <Card.Header className="bg-white d-flex justify-content-between align-items-center py-3">
-              <h5 className="mb-0 fw-bold">Expiring Soon</h5>
+              <div className="d-flex align-items-center gap-2">
+                <h5 className="mb-0 fw-bold">Expiring Soon</h5>
+                <span
+                  style={{
+                    display: "inline-block",
+                    width: "10px",
+                    height: "10px",
+                    borderRadius: "50%",
+                    backgroundColor: "#f59e0b",
+                    animation: "blink 1.2s ease-in-out infinite",
+                  }}
+                />
+                <Badge bg="warning" text="dark" pill className="ms-1">
+                  {expiringSoon.flat().length}
+                </Badge>
+              </div>
               <Button variant="link" size="sm" className="text-decoration-none">
                 View All
               </Button>
             </Card.Header>
-            <Card.Body>
-              <Table hover responsive align="middle" className="mb-0">
+            <Card.Body className="p-0">
+              <Table
+                hover
+                responsive
+                className="mb-0"
+                style={{ fontSize: "0.875rem" }}
+              >
                 <thead className="table-light">
                   <tr>
-                    <th>Medicine Name</th>
-                    <th>Specialty</th>
-                    <th>Date of Manufacture</th>
-                    <th>Date Of Expiry</th>
-                    <th>Quantity</th>
-                    <th>Actions</th>
+                    <th className="px-3 py-2">Medicine</th>
+                    <th className="py-2">Price/Unit</th>
+                    <th className="py-2">Date Added</th>
+                    <th className="py-2">Expiry Date</th>
+                    <th className="py-2">Stock</th>
+                    <th className="py-2">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {allUsers.filter((user) => user.role === "doctor").length >
-                  0 ? (
-                    allUsers
-                      .filter((user) => user.role === "doctor")
-                      .map((doctor, index) => (
-                        <tr key={index}>
-                          <td className="fw-bold">Dr. {doctor.first_name}</td>
-                          <td>
-                            {doctor.doctordetails?.specialization?.name ||
-                              "Profile not updated"}
-                          </td>
-                          <td>{doctor.doctor_number}</td>
-                          <td>
-                            {doctor.doctordetails?.experience ||
-                              "Profile not updated"}
-                          </td>
-                          <td>
-                            <Badge
-                              bg={
-                                doctor.doctordetails?.availability
-                                  ? "success"
-                                  : "danger"
-                              }
-                            >
-                              {doctor.doctordetails?.availability
-                                ? "Available"
-                                : "Not Available"}
-                            </Badge>
-                          </td>
-                          <td>
-                            <Button
-                              size="sm"
-                              variant="outline-primary"
-                              className="me-2"
-                            >
-                              Edit
-                            </Button>
-                            <Button size="sm" variant="outline-danger">
-                              Remove
-                            </Button>
-                          </td>
-                        </tr>
-                      ))
+                  {expiringSoon.length > 0 ? (
+                    expiringSoon.flat().map((med, index) => (
+                      <tr key={index}>
+                        <td className="px-3 fw-semibold">{med.name}</td>
+                        <td>{med.price_per_unit}</td>
+                        <td>{med.date_added}</td>
+                        <td>
+                          <span className="text-warning fw-semibold">
+                            {med.expiry_date}
+                          </span>
+                        </td>
+                        <td>{med.quantity_in_stock}</td>
+                        <td>
+                          <Button
+                            size="sm"
+                            variant="outline-primary"
+                            className="me-1 p-1"
+                          >
+                            <Pencil size={14} />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline-danger"
+                            className="p-1"
+                          >
+                            <Trash size={14} />
+                          </Button>
+                        </td>
+                      </tr>
+                    ))
                   ) : (
                     <tr>
                       <td colSpan="6" className="text-center text-muted py-4">
-                        No Doctors in your hospital
+                        No medicines expiring soon
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </Table>
+            </Card.Body>
+          </Card>
+        </Col>
+
+        {/* Already Expired */}
+        <Col xl={6}>
+          <Card
+            className="shadow-sm border-0 h-100"
+            style={{ borderLeft: "3px solid #ef4444 !important" }}
+          >
+            <Card.Header
+              className="d-flex justify-content-between align-items-center py-3"
+              style={{ background: "#fff5f5" }}
+            >
+              <div className="d-flex align-items-center gap-2">
+                <h5 className="mb-0 fw-bold text-danger">Already Expired</h5>
+                <span
+                  style={{
+                    display: "inline-block",
+                    width: "10px",
+                    height: "10px",
+                    borderRadius: "50%",
+                    backgroundColor: "#ef4444",
+                    animation: "blink 1.2s ease-in-out infinite",
+                  }}
+                />
+                <Badge bg="danger" pill className="ms-1">
+                  {alreadyExpired.length}
+                </Badge>
+              </div>
+              <Button
+                variant="link"
+                size="sm"
+                className="text-danger text-decoration-none"
+              >
+                View All
+              </Button>
+            </Card.Header>
+            <Card.Body className="p-0">
+              <Table
+                hover
+                responsive
+                className="mb-0"
+                style={{ fontSize: "0.875rem" }}
+              >
+                <thead style={{ background: "#fef2f2" }}>
+                  <tr>
+                    <th className="px-3 py-2">Medicine</th>
+                    <th className="py-2">Price/Unit</th>
+                    <th className="py-2">Date Added</th>
+                    <th className="py-2">Expired On</th>
+                    <th className="py-2">Stock</th>
+                    <th className="py-2">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {alreadyExpired.length > 0 ? (
+                    alreadyExpired.map((med, index) => (
+                      <tr
+                        key={index}
+                        style={{
+                          background: index % 2 === 0 ? "#fff" : "#fffafa",
+                        }}
+                      >
+                        <td className="px-3 fw-semibold">{med.name}</td>
+                        <td>{med.price_per_unit}</td>
+                        <td>{med.date_added}</td>
+                        <td>
+                          <Badge bg="danger" className="fw-normal">
+                            {med.expiry_date}
+                          </Badge>
+                        </td>
+                        <td>{med.quantity_in_stock}</td>
+                        <td>
+                          <Button
+                            size="sm"
+                            variant="outline-primary"
+                            className="me-1 p-1"
+                          >
+                            <Pencil size={14} />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline-danger"
+                            className="p-1"
+                          >
+                            <Trash size={14} />
+                          </Button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="6" className="text-center text-muted py-4">
+                        No expired medicines
                       </td>
                     </tr>
                   )}
@@ -182,6 +296,14 @@ function AdminDashboard() {
           </Card>
         </Col>
       </Row>
+
+      {/* Add blink keyframe globally once */}
+      <style>{`
+        @keyframes blink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.2; }
+        }
+      `}</style>
 
       {/* Recent Appointments */}
       <Row className="mb-4">
@@ -232,10 +354,10 @@ function AdminDashboard() {
                             variant="outline-primary"
                             className="me-2"
                           >
-                            Edit
+                            <Pencil size={16} />
                           </Button>
                           <Button size="sm" variant="outline-danger">
-                            Cancel
+                            <Trash size={16} />
                           </Button>
                         </td>
                       </tr>

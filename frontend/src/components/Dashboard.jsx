@@ -8,6 +8,7 @@ import Mpesa from "./Mpesa";
 import { toast } from "react-toastify";
 import NextAppointmentNotice from "./NextAppointmentNotice";
 import { useNavigate } from "react-router-dom";
+import { Pencil, Trash } from "lucide-react";
 import {
   Container,
   Row,
@@ -82,8 +83,8 @@ function Dashboard() {
   const userId = 1;
 
   const handleLogout = () => {
-    localStorage.removeItem("access");
-    localStorage.removeItem("refresh");
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
     localStorage.removeItem("role"); // if you stored role
     localStorage.removeItem("username");
     toast.success("Logged Out Success");
@@ -805,7 +806,7 @@ function Dashboard() {
                                   ? doctor.doctordetails.specialization.name
                                   : "Profile not updated"}
                               </td>
-                              <td>{doctor.doctor_number}</td>
+                              <td>{doctor.staff_number}</td>
                               <td>
                                 {doctor.doctordetails?.experience
                                   ? doctor.doctordetails.experience
@@ -831,10 +832,10 @@ function Dashboard() {
                                   variant="outline-primary"
                                   className="me-2"
                                 >
-                                  Edit
+                                  <Pencil size={16} />
                                 </Button>
                                 <Button size="sm" variant="outline-danger">
-                                  Remove
+                                  <Trash size={16} />
                                 </Button>
                               </td>
                             </tr>
@@ -900,10 +901,10 @@ function Dashboard() {
                                 variant="outline-primary"
                                 className="me-2"
                               >
-                                Edit
+                                <Pencil size={16} />
                               </Button>
                               <Button size="sm" variant="outline-danger">
-                                Cancel
+                                <Trash size={16} />
                               </Button>
                             </td>
                           </tr>

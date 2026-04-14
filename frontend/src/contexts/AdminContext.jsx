@@ -20,6 +20,7 @@ export const AdminProvider = ({ children }) => {
     }
   }, []);
 
+
   // Departments
   const fetchDepartments = async () => {
     try {
@@ -52,6 +53,19 @@ export const AdminProvider = ({ children }) => {
       console.log("error fetching medicine", error);
     }
   };
+
+  // Expiring soon
+  const today = new Date();
+
+  const fiveDaysFromNow = new Date();
+  fiveDaysFromNow.setDate(today.getDate() + 5);
+
+  const expiringSoon = medicine.flat().filter((med) => {
+    const expiry = new Date(med.expiry_date);
+    return expiry >= today && expiry <= fiveDaysFromNow;
+  });
+
+  
 
   // Appointments
   const fetchAppointments = async () => {
@@ -101,6 +115,7 @@ export const AdminProvider = ({ children }) => {
         setDoctorAppointments,
         medicine,
         setMedicine,
+        expiringSoon,
         // Exposing this to the app!
       }}
     >

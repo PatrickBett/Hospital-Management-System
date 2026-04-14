@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { LogIn, User, Lock } from "react-feather";
 import "bootstrap/dist/css/bootstrap.min.css";
 import api from "../api";
@@ -6,8 +6,10 @@ import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import { toast } from "react-toastify";
+import { AdminContext } from "../contexts/AdminContext";
 
 const LoginForm = () => {
+  const { setIsAuthenticated } = useContext(AdminContext);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -26,6 +28,7 @@ const LoginForm = () => {
       localStorage.setItem("access_token", res.data.access_token);
       localStorage.setItem("refresh_token", res.data.refresh_token);
       localStorage.setItem("role", res.data.role);
+      setIsAuthenticated(true);
       toast.success("SignIn Successful");
       navigate("/dashboard");
       console.log(res.data);
@@ -58,6 +61,7 @@ const LoginForm = () => {
         localStorage.setItem("refresh_token", refresh);
         localStorage.setItem("role", role);
         localStorage.setItem("username", username);
+        setIsAuthenticated(true);
         toast.success("SignIn Successful");
 
         // Redirect based dynamically on the role returned from the backend
@@ -96,6 +100,7 @@ const LoginForm = () => {
       const response = await api.post("api/token/refresh/", {
         refresh,
       });
+      setIsAuthenticated(false);
       navigate("/login");
       localStorage.setItem("access_token", response.data.access);
     }

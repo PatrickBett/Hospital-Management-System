@@ -17,11 +17,21 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 # Create your views here.
 
 # Medicine Views
-class ListInventoryView(ListAPIView):
-    queryset = Medicine.objects.all()
-    serializer_class = MedicineSerializer
+class ListInventoryView(APIView):
     permission_classes = [IsAuthenticated]
 
+    def get(self, request):
+        medicines = Medicine.objects.all()
+        serializer = MedicineSerializer(medicines, many=True)
+        return Response(serializer.data)
+
+    def post(self,request):
+        serializer = MedicineSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+            
 
 # View to list all Room types
 class RoomTypeView(APIView):
@@ -49,6 +59,13 @@ class DepartmentView(APIView):
         departments = Department.objects.all()
         serializer = DepartmentSerializer(departments, many=True)
         return Response(serializer.data)
+    def post(self,request):
+        serializer = DepartmentSerializer(data = request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.error)
+
 class DeleteDepartmentView(RetrieveUpdateDestroyAPIView):
     queryset = Department.objects.all()
     serializer_class = DepartmentSerializer

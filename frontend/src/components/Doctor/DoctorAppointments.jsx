@@ -1,11 +1,15 @@
 import React, { useContext } from "react";
 import { AdminContext } from "../../contexts/AdminContext";
 import api from "../../api";
+import { Pencil, Trash } from "lucide-react";
 
 function DoctorAppointments() {
-  const { doctorappointments, setDoctorAppointments } = useContext(AdminContext);
-  console.log("DoctorAppointments render, doctorappointments:", doctorappointments);
-
+  const { doctorappointments, setDoctorAppointments } =
+    useContext(AdminContext);
+  console.log(
+    "DoctorAppointments render, doctorappointments:",
+    doctorappointments,
+  );
 
   return (
     <div className="p-4 bg-white rounded shadow-sm m-2">
@@ -36,30 +40,38 @@ function DoctorAppointments() {
               </tr>
             </thead>
             <tbody>
-              {doctorappointments.flat().map((apt, index) => (
-                <tr key={apt.id || index}>
-                  <td>{index + 1}</td>
-                  <td>{apt.patient.first_name}</td>
-                  <td>{apt.date}</td>
-                  <td>{apt.time}</td>
-                  <td>{apt.problem}</td>
-                  <td>{apt.status}</td>
-                  <td>
-                    <button
-                      className="btn btn-sm btn-warning me-2"
-                      onClick={() => handleEdit(apt)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="btn btn-sm btn-danger"
-                      onClick={() => handleDelete(apt.id)}
-                    >
-                      Delete
-                    </button>
+              {doctorappointments.flat().length > 0 ? (
+                doctorappointments.flat().map((apt, index) => (
+                  <tr key={apt.id || index}>
+                    <td>{index + 1}</td>
+                    <td>{apt.patient.first_name}</td>
+                    <td>{apt.date}</td>
+                    <td>{apt.time}</td>
+                    <td>{apt.problem}</td>
+                    <td>{apt.status}</td>
+                    <td>
+                      <button
+                        className="btn btn-sm btn-warning me-2"
+                        onClick={() => handleEdit(apt)}
+                      >
+                        <Pencil size={16} />
+                      </button>
+                      <button
+                        className="btn btn-sm btn-danger"
+                        onClick={() => handleDelete(apt.id)}
+                      >
+                        <Trash size={16} />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="7" className="text-center">
+                    No appointments available.
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>

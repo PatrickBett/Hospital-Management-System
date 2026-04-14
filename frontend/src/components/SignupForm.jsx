@@ -3,6 +3,16 @@ import api from "../api";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
+const ROLES = [
+  { value: "patient", label: "Patient" },
+  { value: "doctor", label: "Doctor" },
+  { value: "nurse", label: "Nurse" },
+  { value: "receptionist", label: "Receptionist" },
+  { value: "labtech", label: "Lab Technician" },
+  { value: "pharmacist", label: "Pharmacist" },
+  { value: "admin", label: "Admin" },
+];
+
 export default function SignupForm() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -12,8 +22,8 @@ export default function SignupForm() {
     email: "",
     password: "",
     confirmPassword: "",
-    role: "patient", // Default role set to patient
-    doctor_number: "",
+    role: "patient",
+    staff_number: "",
   });
 
   const [errors, setErrors] = useState({});
@@ -23,97 +33,78 @@ export default function SignupForm() {
   const validateForm = () => {
     const newErrors = {};
 
-    // First name validation
-    if (!formData.first_name.trim()) {
+    if (!formData.first_name.trim())
       newErrors.first_name = "First name is required";
-    }
 
-    // Last name validation
-    if (!formData.last_name.trim()) {
+    if (!formData.last_name.trim())
       newErrors.last_name = "Last name is required";
-    }
 
-    // Email validation
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+    if (!formData.username.trim()) newErrors.username = "Username is required";
+
+    if (!formData.email.trim()) newErrors.email = "Email is required";
+    else if (!/\S+@\S+\.\S+/.test(formData.email))
       newErrors.email = "Email is invalid";
-    }
 
-    // Password validation
-    if (!formData.password) {
-      newErrors.password = "Password is required";
-    } else if (formData.password.length < 6) {
+    if (!formData.password) newErrors.password = "Password is required";
+    else if (formData.password.length < 6)
       newErrors.password = "Password must be at least 6 characters";
-    }
 
-    // Confirm password validation
-    if (formData.password !== formData.confirmPassword) {
+    if (formData.password !== formData.confirmPassword)
       newErrors.confirmPassword = "Passwords do not match";
-    }
 
-    // Doctor number validation (only if role is doctor)
-    if (formData.role === "doctor" && !formData.doctor_number.trim()) {
-      newErrors.doctor_number = "Doctor number is required";
-    }
+    if (formData.role !== "patient" && !formData.staff_number.trim())
+      newErrors.staff_number = "License / staff number is required";
 
     return newErrors;
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    setFormData((prev) => ({
+      ...prev,
       [name]: value,
-    });
+      // clear staff_number when switching to patient
+      ...(name === "role" && value === "patient" ? { staff_number: "" } : {}),
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formErrors = validateForm();
 
-    if (Object.keys(formErrors).length === 0) {
-      // Form is valid, submit data
-      console.log("Form submitted successfully:", formData);
-
-      try {
-        const response = await api.post("api/users/", formData);
-        console.log(response.data);
-
-        toast.success("Signed Up Successfully");
-        navigate("/login");
-
-        setSubmitStatus("success");
-        setErrors({});
-
-        // Reset form after successful submission
-        setTimeout(() => {
-          setFormData({
-            first_name: "",
-            last_name: "",
-            username: "",
-            email: "",
-            password: "",
-            confirmPassword: "",
-            role: "patient",
-            doctor_number: "",
-          });
-          setSubmitStatus("");
-        }, 3000);
-      } catch (error) {
-        console.log(error);
-        toast.error("Signup Unsuccessful");
-        setSubmitStatus("error");
-      }
-    } else {
+    if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
+      setSubmitStatus("error");
+      return;
+    }
+
+    try {
+      await api.post("api/users/", formData);
+      toast.success("Signed Up Successfully");
+      setSubmitStatus("success");
+      setErrors({});
+      navigate("/login");
+      setTimeout(() => {
+        setFormData({
+          first_name: "",
+          last_name: "",
+          username: "",
+          email: "",
+          password: "",
+          confirmPassword: "",
+          role: "patient",
+          staff_number: "",
+        });
+        setSubmitStatus("");
+      }, 3000);
+    } catch (error) {
+      console.log(error);
+      toast.error("Signup Unsuccessful");
       setSubmitStatus("error");
     }
   };
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
+  const selectedRoleLabel = ROLES.find((r) => r.value === formData.role)?.label;
 
   return (
     <div
@@ -130,62 +121,21 @@ export default function SignupForm() {
           </h1>
           <p
             className="text-center text-muted mb-4 mt-2"
-            style={{ fontSize: "1.2rem" }}
+            style={{ fontSize: "1.1rem" }}
           >
             Sign up to create your account
           </p>
 
           {submitStatus === "success" && (
             <div className="alert alert-success" role="alert">
-              Registration successful! Please check your email to verify your
-              account.
+              Registration successful! Redirecting to login...
             </div>
           )}
 
-          {/* Role Selection */}
-          <div className="card mb-4">
-            <div className="card-body p-0">
-              <div className="d-flex">
-                <button
-                  type="button"
-                  className={`btn flex-grow-1 py-3 rounded-0 ${
-                    formData.role === "patient"
-                      ? "btn-primary text-white"
-                      : "btn-light"
-                  }`}
-                  onClick={() => setFormData({ ...formData, role: "patient" })}
-                >
-                  <i className="bi bi-person me-2"></i> Patient
-                </button>
-                <button
-                  type="button"
-                  className={`btn flex-grow-1 py-3 rounded-0 ${
-                    formData.role === "doctor"
-                      ? "btn-primary text-white"
-                      : "btn-light"
-                  }`}
-                  onClick={() => setFormData({ ...formData, role: "doctor" })}
-                >
-                  <i className="bi bi-clipboard2-pulse me-2"></i> Doctor
-                </button>
-                <button
-                  type="button"
-                  className={`btn flex-grow-1 py-3 rounded-0 ${
-                    formData.role === "admin"
-                      ? "btn-primary text-white"
-                      : "btn-light"
-                  }`}
-                  onClick={() => setFormData({ ...formData, role: "admin" })}
-                >
-                  <i className="bi bi-shield-lock me-2"></i> Admin
-                </button>
-              </div>
-            </div>
-          </div>
-
           <form onSubmit={handleSubmit}>
+            {/* First & Last Name */}
             <div className="row mb-3">
-              <div className="col-md-6">
+              <div className="col-md-6 mb-3 mb-md-0">
                 <label htmlFor="first_name" className="form-label">
                   First Name
                 </label>
@@ -195,9 +145,7 @@ export default function SignupForm() {
                   </span>
                   <input
                     type="text"
-                    className={`form-control ${
-                      errors.first_name ? "is-invalid" : ""
-                    }`}
+                    className={`form-control ${errors.first_name ? "is-invalid" : ""}`}
                     id="first_name"
                     name="first_name"
                     value={formData.first_name}
@@ -220,9 +168,7 @@ export default function SignupForm() {
                   </span>
                   <input
                     type="text"
-                    className={`form-control ${
-                      errors.last_name ? "is-invalid" : ""
-                    }`}
+                    className={`form-control ${errors.last_name ? "is-invalid" : ""}`}
                     id="last_name"
                     name="last_name"
                     value={formData.last_name}
@@ -236,19 +182,18 @@ export default function SignupForm() {
               </div>
             </div>
 
+            {/* Username */}
             <div className="mb-3">
               <label htmlFor="username" className="form-label">
                 Username
               </label>
               <div className="input-group">
                 <span className="input-group-text bg-light">
-                  <i className="bi bi-person"></i>
+                  <i className="bi bi-at"></i>
                 </span>
                 <input
                   type="text"
-                  className={`form-control ${
-                    errors.username ? "is-invalid" : ""
-                  }`}
+                  className={`form-control ${errors.username ? "is-invalid" : ""}`}
                   id="username"
                   name="username"
                   value={formData.username}
@@ -261,6 +206,7 @@ export default function SignupForm() {
               </div>
             </div>
 
+            {/* Email */}
             <div className="mb-3">
               <label htmlFor="email" className="form-label">
                 Email Address
@@ -284,11 +230,36 @@ export default function SignupForm() {
               </div>
             </div>
 
-            {/* Conditional Doctor Number Field */}
-            {formData.role === "doctor" && (
+            {/* Role */}
+            <div className="mb-3">
+              <label htmlFor="role" className="form-label">
+                Role
+              </label>
+              <div className="input-group">
+                <span className="input-group-text bg-light">
+                  <i className="bi bi-person-badge"></i>
+                </span>
+                <select
+                  className="form-select"
+                  id="role"
+                  name="role"
+                  value={formData.role}
+                  onChange={handleChange}
+                >
+                  {ROLES.map((r) => (
+                    <option key={r.value} value={r.value}>
+                      {r.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* License / Staff Number — all roles except patient */}
+            {formData.role !== "patient" && (
               <div className="mb-3">
-                <label htmlFor="doctor_number" className="form-label">
-                  Doctor Number
+                <label htmlFor="staff_number" className="form-label">
+                  {selectedRoleLabel} License / Staff Number
                 </label>
                 <div className="input-group">
                   <span className="input-group-text bg-light">
@@ -296,24 +267,23 @@ export default function SignupForm() {
                   </span>
                   <input
                     type="text"
-                    className={`form-control ${
-                      errors.doctor_number ? "is-invalid" : ""
-                    }`}
-                    id="doctor_number"
-                    name="doctor_number"
-                    value={formData.doctor_number}
+                    className={`form-control ${errors.staff_number ? "is-invalid" : ""}`}
+                    id="staff_number"
+                    name="staff_number"
+                    value={formData.staff_number}
                     onChange={handleChange}
-                    placeholder="Enter your doctor license number"
+                    placeholder={`Enter your ${selectedRoleLabel} license/staff number`}
                   />
-                  {errors.doctor_number && (
+                  {errors.staff_number && (
                     <div className="invalid-feedback">
-                      {errors.doctor_number}
+                      {errors.staff_number}
                     </div>
                   )}
                 </div>
               </div>
             )}
 
+            {/* Password */}
             <div className="mb-3">
               <label htmlFor="password" className="form-label">
                 Password
@@ -324,9 +294,7 @@ export default function SignupForm() {
                 </span>
                 <input
                   type={showPassword ? "text" : "password"}
-                  className={`form-control ${
-                    errors.password ? "is-invalid" : ""
-                  }`}
+                  className={`form-control ${errors.password ? "is-invalid" : ""}`}
                   id="password"
                   name="password"
                   value={formData.password}
@@ -336,7 +304,7 @@ export default function SignupForm() {
                 <button
                   className="btn btn-outline-secondary"
                   type="button"
-                  onClick={togglePasswordVisibility}
+                  onClick={() => setShowPassword(!showPassword)}
                 >
                   <i
                     className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"}`}
@@ -348,19 +316,18 @@ export default function SignupForm() {
               </div>
             </div>
 
+            {/* Confirm Password */}
             <div className="mb-4">
               <label htmlFor="confirmPassword" className="form-label">
                 Confirm Password
               </label>
               <div className="input-group">
                 <span className="input-group-text bg-light">
-                  <i className="bi bi-lock"></i>
+                  <i className="bi bi-lock-fill"></i>
                 </span>
                 <input
                   type={showPassword ? "text" : "password"}
-                  className={`form-control ${
-                    errors.confirmPassword ? "is-invalid" : ""
-                  }`}
+                  className={`form-control ${errors.confirmPassword ? "is-invalid" : ""}`}
                   id="confirmPassword"
                   name="confirmPassword"
                   value={formData.confirmPassword}
@@ -375,29 +342,18 @@ export default function SignupForm() {
               </div>
             </div>
 
-            <div className="mb-3 form-check">
-              <input
-                type="checkbox"
-                className="form-check-input"
-                id="rememberMe"
-              />
-              <label className="form-check-label" htmlFor="rememberMe">
-                Remember me
-              </label>
-            </div>
-
+            {/* Submit */}
             <div className="d-grid">
               <button type="submit" className="btn btn-primary btn-lg">
                 <i className="bi bi-box-arrow-in-right me-2"></i>
-                Sign Up as{" "}
-                {formData.role.charAt(0).toUpperCase() + formData.role.slice(1)}
+                Sign Up as {selectedRoleLabel}
               </button>
             </div>
           </form>
 
-          <p className="text-center mt-4">
+          <p className="text-center mt-4 mb-0">
             Already have an account?{" "}
-            <a href="login" className="text-primary text-decoration-none">
+            <a href="/login" className="text-primary text-decoration-none">
               Sign In
             </a>
           </p>
